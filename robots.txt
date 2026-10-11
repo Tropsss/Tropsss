@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tropsss.github.io/Tropsss/sitemap.xml
