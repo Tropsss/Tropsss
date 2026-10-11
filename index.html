@@ -379,7 +379,26 @@ tr:last-child td{border-bottom:0}
 
 .lkb{margin:0 0 14px;padding:9px 12px;border:1px solid rgba(229,193,0,.35);border-radius:10px;background:rgba(229,193,0,.06);color:#e8d27a;font-size:.88rem}
 .lkb .lk{color:#fff;text-decoration:underline}
-</style><!-- v41 -->
+
+/* ===== v43: layout adattivo alle dimensioni dello schermo ===== */
+html{font-size:clamp(15px,calc(13.6px + .28vw),18px)}
+body{font-size:1rem}
+.kp.k5{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.fl{grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))}
+.pg{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+@media(min-width:1200px){main{max-width:1040px;padding:26px 40px 72px}main.wide{max-width:1440px}.cols{gap:0 56px}}
+@media(min-width:1700px){main{max-width:1180px;padding:30px 56px 80px}main.wide{max-width:1720px}}
+@media(min-width:1400px){.home .cols,.cols.c3{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:760px) and (max-width:899px){main,main.wide{padding:18px 28px 56px}.kp.k5{grid-template-columns:repeat(5,1fr)}}
+@media(min-width:760px){.fl>*{grid-column:auto!important}}
+@media(max-width:640px){.pt .hm2{display:none}}
+.fl{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+@media(max-width:380px){html{font-size:14.5px}main,main.wide{padding:12px 12px 44px}.kp div{padding:10px 4px}.item .act button{padding:4px 8px}}
+@media(max-width:640px){.pt td:first-child,.pt th:first-child{padding-left:8px}.pt .fmc,.pt .hm{display:none}}
+@media(min-width:900px) and (max-height:700px){#sb{overflow-y:auto}#sb .ni{padding:6px 10px}}
+@media(hover:none){button:hover{transform:none}}
+@supports(padding:max(0px)){main,#tb{padding-left:max(var(--px,16px),env(safe-area-inset-left));padding-right:max(var(--px,16px),env(safe-area-inset-right))}}
+</style><!-- v43 -->
 </head><body><div id="app"><aside id="sb"></aside><div id="mn"><header id="tb"></header><main><div id="warn" class="warn" hidden></div><div id="v"></div></main></div></div>
 <script>/* v13: evoluzione giocatori, data di nascita, voti */
 const $=s=>document.querySelector(s);
@@ -880,7 +899,7 @@ function pool(){const q=nk(tf.q);return S.players.filter(p=>!tf.ids.includes(p.i
 function fal(){const n=tf.n||50,a=pool();return a.length?a.slice(0,n).map(p=>prow(p,'fa',tf.nz?'Convoca':'Aggiungi')).join('')+(a.length>n?`<p class="mut" style="text-align:center">Mostrati ${n} di ${a.length}</p><div class="row" style="justify-content:center;margin-top:0"><button onclick="tf.n=${n+50};$('#fal').innerHTML=fal()">Mostra altri</button></div>`:''):(tf.nz?'<p class="mut">Nessun giocatore con questa nazionalità. Imposta la nazionalità nella scheda dei giocatori.</p>':'<p class="mut">Nessun giocatore svincolato trovato.</p>')}
 const avA=t=>{const a=t.ids.map(i=>P(i)).filter(Boolean).map(ageC).filter(x=>x!==null);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null},f1=x=>x==null?'–':x.toFixed(1).replace('.',',');
 function tlist(nz){const q=nk(fv.tq),n=fv.tn||PG,a=S.teams.filter(t=>!!t.nz===!!nz&&(!q||t.name.toLowerCase().includes(q))).sort((x,y)=>x.name.localeCompare(y.name,'it'));
- return a.length?`<div class="ts"><table class="pt nm1"><thead><tr><th>${nz?'Nazionale':'Squadra'}</th><th>${nz?'Convocati':'Giocatori'}</th><th>Att</th><th>Dif</th><th>Por</th><th class="ag">Età</th><th>Val</th><th></th></tr></thead><tbody>`+a.slice(0,n).map(t=>{const s=str(t);return `<tr><td><a class="lk" onclick="ot('${t.id}')">${sw(t)}${esc(t.name)}</a></td><td>${t.ids.length}</td><td>${Math.round(s.A)}</td><td>${Math.round(s.D)}</td><td>${Math.round(s.G)}</td><td class="ag">${f1(avA(t))}</td><td>${rt(Math.round((s.A+s.D+s.G)/3))}</td><td class="ac"><button onclick="ot('${t.id}')">Scheda</button><button class="sec" onclick="ed='${t.id}';render()">Modifica</button><button class="sec${cf===t.id?' dg':''}" onclick="dT('${t.id}')">${cf===t.id?'Conferma':'Elimina'}</button></td></tr>`}).join('')+`</tbody></table></div>`+(a.length>n?mr(a.length,n,'tn',nz?'tln':'tlc','#tl'):''):'<div class="empty">Nessuna squadra trovata.</div>'}
+ return a.length?`<div class="ts"><table class="pt nm1"><thead><tr><th>${nz?'Nazionale':'Squadra'}</th><th>${nz?'Convocati':'Giocatori'}</th><th class="hm2">Att</th><th class="hm2">Dif</th><th class="hm2">Por</th><th class="ag">Età</th><th>Val</th><th></th></tr></thead><tbody>`+a.slice(0,n).map(t=>{const s=str(t);return `<tr><td><a class="lk" onclick="ot('${t.id}')">${sw(t)}${esc(t.name)}</a></td><td>${t.ids.length}</td><td class="hm2">${Math.round(s.A)}</td><td class="hm2">${Math.round(s.D)}</td><td class="hm2">${Math.round(s.G)}</td><td class="ag">${f1(avA(t))}</td><td>${rt(Math.round((s.A+s.D+s.G)/3))}</td><td class="ac"><button onclick="ot('${t.id}')">Scheda</button><button class="sec" onclick="ed='${t.id}';render()">Modifica</button><button class="sec${cf===t.id?' dg':''}" onclick="dT('${t.id}')">${cf===t.id?'Conferma':'Elimina'}</button></td></tr>`}).join('')+`</tbody></table></div>`+(a.length>n?mr(a.length,n,'tn',nz?'tln':'tlc','#tl'):''):'<div class="empty">Nessuna squadra trovata.</div>'}
 const tlc=()=>tlist(0),tln=()=>tlist(1);
 function rlh(L){return '<h3>Ruoli dei titolari</h3>'+L.filter(Boolean).map(e=>{const p=e.p,pick=tf.ro[p.id]||{};if(!POSM[pp(p)])return '';
  const sel=(ph,k)=>{const best=rolr(p,ph,'',e.l),c_=pick[k]||'';return `<label>${ph==='in'?'In possesso':'Non in possesso'}<select onchange="sro('${p.id}','${k}',this.value)"><option value=""${c_?'':' selected'}>Automatico${best?`: ${esc(best.n)} (${Math.round(best.v)})`:''}</option>${rls(p,ph,e.l).map(r=>{const x=rolr(p,ph,r[0],e.l);return `<option value="${esc(r[0])}"${c_===r[0]?' selected':''}>${esc(r[0])} (${Math.round(x.v)})</option>`}).join('')}</select></label>`};
@@ -1631,7 +1650,7 @@ async function dbReset(){const o=await dbFetch();if(!o){dbMsg='Non riesco a scar
  dbApply(N,+o.dbv||1,o.ch);rvs();dbMsg='Database ufficiale ripristinato.';go('db')}
 function dbUpd(){if(!dbUp)return;if(cf!=='dbup'){cf='dbup';return render()}dbApply(dbUp.N,dbUp.v,dbUp.ch);rvs();dbMsg='Database ufficiale aggiornato.';go('db')}
 function dbCr(on){const o=ovR();if(o)o.cr=on?1:undefined;else S.cfg.push({id:'ov',v:0,cr:on?1:undefined});if(!on&&o)o.v=0;save();dbMsg='';render()}
-async function dbExp(){const o={app:'simulatore',dbv:Math.floor(Date.now()/1000),ch:(ovR()||{}).ch||undefined,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'):S[n]);dbMsg=await dlF('database.json',JSON.stringify(o),'application/json')==='File pronto.'?`Database esportato (${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni). Mandami il file e scrivimi «pubblica sul sito».`:'Download non riuscito.';render()}
+async function dbExp(){const o={app:'simulatore',dbv:Math.floor(Date.now()/1000),ch:(ovR()||{}).ch||undefined,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'):S[n]);dbMsg=await dlF('database.json',JSON.stringify(o),'application/json')==='File pronto.'?`Database esportato (${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni). Per pubblicarlo: su GitHub, nel repository del sito, premi «Add file» › «Upload files», carica database.json (sostituisce il precedente) e conferma con «Commit changes».`:'Download non riuscito.';render()}
 async function dbCopy(){if(cf!=='dbcp'){cf='dbcp';return render()}cf=null;if(!idb){dbMsg='Copia non possibile: questo browser non permette l’archivio esteso.';return render()}
  if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;
  try{const d=await new Promise((ok,ko)=>{const r=indexedDB.open('simulatore',4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)});
@@ -1647,7 +1666,7 @@ function vDb(){const u=SP==='u',ov=ovR()||{},n=`${S.players.length} giocatori, $
   if(dbUp)b+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)">È disponibile una nuova versione del database ufficiale. Aggiornando, i dati e le stagioni di questo spazio vengono sostituiti.<div class="row"><button class="${cf==='dbup'?'dg':'pri'}" onclick="dbUpd()">${cf==='dbup'?'Conferma: aggiorna e sostituisci':'Aggiorna ora'}</button>${cf==='dbup'?'<button onclick="cf=null;render()">Annulla</button>':''}</div></div>`;
   if(!ov.cr)b+=`<div class="row"><button class="${cf==='dbrs'?'dg':''}" onclick="if(cf!=='dbrs'){cf='dbrs';render()}else{cf=null;dbReset()}">${cf==='dbrs'?'Conferma: ripristina l’ufficiale':'Ripristina il database ufficiale'}</button>${cf==='dbrs'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>`;
   b+=`<div class="row"><button class="${cf==='dbcp'?'dg':''}" onclick="dbCopy()">${cf==='dbcp'?'Conferma: sostituisci il database personale':'Copia nel mio database personale'}</button>${cf==='dbcp'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>
-  <h3>Per l’autore</h3>${ov.cr?`<p class="mut">Modalità creatore attiva: puoi modificare tutto in questo spazio. Quando hai finito, esporta il file. Nel file va tutto ciò che vedi qui, stagioni e statistiche comprese: azzera prima ciò che non vuoi pubblicare.</p><div class="row"><button class="pri" onclick="dbExp()">Esporta il database ufficiale</button><button onclick="dbCr(false)">Disattiva la modalità creatore</button></div>
+  <h3>Per l’autore</h3>${ov.cr?`<p class="mut">Modalità creatore attiva: puoi modificare tutto in questo spazio. Quando hai finito, esporta il file. Nel file va tutto ciò che vedi qui, stagioni e statistiche comprese: azzera prima ciò che non vuoi pubblicare.</p><div class="row"><button class="pri" onclick="dbExp()">Esporta il database ufficiale</button><button onclick="dbCr(false)">Disattiva la modalità creatore</button></div>${xlH()}
   <h4>Codice creatore</h4><p class="mut">${ov.ch?'Un codice è impostato: serve per attivare la modalità creatore su altri dispositivi e viene pubblicato col database solo come impronta.':'Nessun codice impostato: chiunque potrebbe attivare la modalità creatore. Impostane uno lungo (almeno 8 caratteri).'}</p><label>${ov.ch?'Nuovo codice':'Codice'}<input id="cdn" type="password" autocomplete="new-password"></label><div class="row" style="margin-top:0"><button onclick="dbSetCode()">${ov.ch?'Cambia il codice':'Imposta il codice'}</button></div>`
   :ov.ch?`<p class="mut">Questo spazio è in sola lettura. Se sei l’autore inserisci il codice creatore.</p><label>Codice creatore<input id="cdc" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')dbUnlock()"></label><div class="row" style="margin-top:0"><button onclick="dbUnlock()">Attiva la modalità creatore</button></div>`
   :`<p class="mut">Nessun codice creatore impostato.</p><div class="row"><button onclick="dbCr(true)">Attiva la modalità creatore</button></div>`}`}
@@ -1674,6 +1693,73 @@ function lkUi(){const v=$('#v');if(!v||tab==='db')return;
  v.querySelectorAll('button').forEach(b=>{const o=b.getAttribute('onclick')||'';if(/(^|;)\s*ed='|\b(dP|dT|dC|dY|bkT|impT|seed)\(/.test(o))b.hidden=true});
  if(tab==='bak'){const hs=[...v.querySelectorAll('h3')].find(x=>/Importa/.test(x.textContent));if(hs){let n=hs;const rm=[];while(n){rm.push(n);n=n.nextElementSibling}rm.forEach(x=>x.remove())}}
  if(['giocatori','squadre','nazionali','competizioni','schemi','bak'].includes(tab))v.insertAdjacentHTML('afterbegin',`<p class="lkb">${LKM} <a class="lk" onclick="go('db')">Database</a></p>`)}
+/* ===== v42: importazione dal foglio Excel (modalità creatore) ===== */
+let xl=null,xlBusy=false;
+async function xlInf(u8){const ds=new DecompressionStream('deflate-raw'),w=ds.writable.getWriter();w.write(u8);w.close();return new Uint8Array(await new Response(ds.readable).arrayBuffer())}
+async function xlZip(buf){const u=new Uint8Array(buf),dv=new DataView(buf);let e=-1;for(let i=u.length-22;i>=Math.max(0,u.length-70000);i--)if(dv.getUint32(i,true)===0x06054b50){e=i;break}
+ if(e<0)throw new Error('Non è un file Excel (.xlsx).');const n=dv.getUint16(e+10,true);let o=dv.getUint32(e+16,true);const out={},td=new TextDecoder();
+ for(let k=0;k<n;k++){if(dv.getUint32(o,true)!==0x02014b50)throw new Error('File Excel non leggibile.');const m=dv.getUint16(o+10,true),cs=dv.getUint32(o+20,true),nl=dv.getUint16(o+28,true),el=dv.getUint16(o+30,true),cl=dv.getUint16(o+32,true),lo=dv.getUint32(o+42,true),nm=td.decode(u.subarray(o+46,o+46+nl));o+=46+nl+el+cl;
+  if(!/\.(xml|rels)$/.test(nm))continue;const ds=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true),raw=u.subarray(ds,ds+cs);out[nm]=td.decode(m===0?raw:await xlInf(raw))}
+ return out}
+function xlRead(files){const X=t=>new DOMParser().parseFromString(t,'application/xml'),ss=[];
+ if(files['xl/sharedStrings.xml'])[...X(files['xl/sharedStrings.xml']).getElementsByTagName('si')].forEach(si=>ss.push([...si.getElementsByTagName('t')].map(t=>t.textContent).join('')));
+ const rel={};[...X(files['xl/_rels/workbook.xml.rels']).getElementsByTagName('Relationship')].forEach(r=>rel[r.getAttribute('Id')]=r.getAttribute('Target'));
+ const out={};[...X(files['xl/workbook.xml']).getElementsByTagName('sheet')].forEach(sh=>{
+  const id=sh.getAttribute('r:id')||sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');let t=rel[id]||'';t=t.replace(/^\//,'');if(!t.startsWith('xl/'))t='xl/'+t;const f=files[t];if(!f)return;
+  const rows=[];[...X(f).getElementsByTagName('row')].forEach(r=>{const ri=+r.getAttribute('r')-1,a=rows[ri]=[];[...r.getElementsByTagName('c')].forEach(c=>{const ref=c.getAttribute('r')||'',m=ref.match(/^([A-Z]+)/);if(!m)return;let ci=0;for(const ch of m[1])ci=ci*26+ch.charCodeAt(0)-64;ci--;
+   const ty=c.getAttribute('t'),ve=c.getElementsByTagName('v')[0],v=ve?ve.textContent:'';let x='';
+   if(ty==='s')x=ss[+v]||'';else if(ty==='inlineStr')x=[...c.getElementsByTagName('t')].map(t=>t.textContent).join('');else if(ty==='b')x=v==='1'?'1':'';else if(ty==='e')x='';else x=v;a[ci]=String(x).trim()})});
+  out[sh.getAttribute('name')]=rows});
+ return out}
+function xlDate(v){if(/^\d{4,5}(\.\d+)?$/.test(v)&&+v>1000&&+v<80000)return new Date(Math.round((+v-25569)*864e5)).toISOString().slice(0,10);return v}
+function xlParse(sh){if(!sh.Giocatori&&!sh.Portieri)throw new Error('Mancano i fogli «Giocatori» e «Portieri»: è il modello Tropsss?');
+ const num=v=>/^-?\d+\.0+$/.test(v)?v.replace(/\.0+$/,''):v;
+ const rd=(rows,core)=>{const H=(rows[1]||[]).map(h=>h||''),out=[];for(let r=2;r<rows.length;r++){const row=rows[r];if(!row)continue;const d={};let seen=0;
+   H.forEach((h,i)=>{if(!h||h==='Controllo')return;let k=h;if(h==='Posizione'){if(!core)k='PSI_Posizione';else{if(seen)k='PSI_Posizione';seen=1}}const v=row[i];if(v!=null&&v!=='')d[k]=(k==='Nascita'?xlDate(v):num(v))});
+   if(!d.Nome||/\(esempio\)/i.test(d.Nome))continue;out.push(d)}return out};
+ const rows=rd(sh.Giocatori||[],true);rd(sh.Portieri||[],false).forEach(d=>{d.Ruolo='POR';rows.push(d)});
+ const psi=[],hdr=[];rows.forEach((d,i)=>{psi[i]=d.PSI_Posizione;Object.keys(d).forEach(k=>{if(k!=='PSI_Posizione'&&!hdr.includes(k))hdr.push(k)})});
+ const H=['Nome','Ruolo',...hdr.filter(k=>k!=='Nome'&&k!=='Ruolo')],q=v=>/[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+ const csv=H.map(q).join(';')+'\n'+rows.map(d=>H.map(h=>q(String(d[h]==null?'':d[h]))).join(';')).join('\n');
+ const teams=[],comps=[];(sh.Squadre||[]).slice(1).forEach(r=>{r=r||[];const nm=r[0]||'';if(!nm||/\(esempio\)/i.test(nm)||nm==='FC Esempio')return;teams.push({name:nm,cl:[r[1],r[2],r[3]].filter(Boolean),fm:r[4]||'',comp:r[5]||''})});
+ (sh.Competizioni||[]).slice(1).forEach(r=>{r=r||[];const nm=r[0]||'';if(!nm||nm==='Campionato Esempio')return;comps.push({name:nm,type:r[1]||'',dt:xlDate(r[2]||''),pr:r[3]||'',q:r[4]||'',g:r[5]||'',k:r[6]||'',qg:r[7]||''})});
+ return{csv,teams,comps,psi,n:rows.length}}
+const XCN={rosso:'#D32F2F',blu:'#1565C0',azzurro:'#29B6F6',celeste:'#81D4FA',verde:'#1D8650',giallo:'#FBC02D',oro:'#C9A227',rubino:'#B0123A',zaffiro:'#0F3D91',avorio:'#F5F0E1',turchese:'#1BB5A8',ciano:'#00BCD4',antracite:'#383E42',corallo:'#FF6F61',indaco:'#3F3FA8',argento:'#C0C0C0',ocra:'#CC7722',magenta:'#D81B8C',bronzo:'#8C6A3A',porpora:'#6A1B6A',smeraldo:'#0E7C59',arancione:'#F57C00',nero:'#111111',bianco:'#FFFFFF',grigio:'#9E9E9E',viola:'#7B1FA2',rosa:'#F48FB1',bordeaux:'#800020',granata:'#7B1F2E'};
+function xlApply(I){const out={errs:[],msg:[]},col=x=>{x=String(x).trim();const k=x.toLowerCase();if(XCN[k])return XCN[k];const m=x.match(/^#?([0-9a-fA-F]{6})$/);return m?'#'+m[1].toUpperCase():null};
+ S.players=[];S.teams=[];S.comps=[];S.stats=[];S.cfg=S.cfg.filter(x=>x.id==='ov');S.cfg.push({id:'g',date:tdy()});rx();
+ const i0={dup:imp.dup,mk:imp.mk,txt:imp.txt,res:imp.res,msg:imp.msg};imp.dup=false;imp.mk=true;imp.txt=I.csv;const r=impChk(I.csv);
+ if(r.errs.length){Object.assign(imp,i0);out.errs=r.errs;return out}
+ imp.res=r;impGo();Object.assign(imp,i0);
+ I.psi.forEach((v,i)=>{const p=S.players[i];if(p&&v!=null&&v!==''&&+v>=1&&+v<=99){p.d=p.d||{};p.d['psi|Posizione']=Math.round(+v)}});
+ I.teams.forEach(t=>{let x=S.teams.find(y=>!y.nz&&nk(y.name)===nk(t.name));if(!x){x={id:uid(),name:t.name,tt:{},pk:'',cp:'',cl:[],ids:[],fm:'4-4-2',xi:[],ro:{}};S.teams.push(x)}
+  const cl=t.cl.map(col);if(cl.some(c=>!c))out.errs.push('Squadra '+t.name+': colore non riconosciuto ('+t.cl.join(', ')+')');else if(cl.length)x.cl=cl.slice(0,3);
+  if(t.fm){if(FM[t.fm])x.fm=t.fm;else out.errs.push('Squadra '+t.name+': modulo non valido ('+t.fm+')')}});
+ const PK=Object.fromEntries(Object.entries(PRF).map(([k,v])=>[v.n.toLowerCase(),k]));
+ I.comps.forEach(c=>{if(S.comps.some(x=>nk(x.name)===nk(c.name))){out.errs.push('Competizione '+c.name+': nome ripetuto');return}const ty=TY.find(x=>x===c.type)||TY[0];if(c.type&&ty!==c.type)out.errs.push('Competizione '+c.name+': formato non valido ('+c.type+')');
+  const ids=I.teams.filter(t=>t.comp===c.name).map(t=>S.teams.find(y=>!y.nz&&nk(y.name)===nk(t.name))).filter(Boolean).map(t=>t.id);
+  const o={id:uid(),name:c.name,type:ty,ids,q:Math.max(2,+c.q||4),dt:/^\d{4}-\d{2}-\d{2}$/.test(c.dt)?c.dt:sdOf({})};
+  if(c.pr){const k=PK[c.pr.toLowerCase()];if(k)o.pr=k;else out.errs.push('Competizione '+c.name+': profilo non valido ('+c.pr+')')}
+  if(ty===TY[3]||ty===TY[4]){o.g=Math.max(1,+c.g||2);o.k=Math.max(2,+c.k||4);if(ids.length>o.g*o.k)out.errs.push('Competizione '+c.name+': '+ids.length+' squadre ma '+o.g+' gironi da '+o.k+' ne contengono '+o.g*o.k);if(ty===TY[4]){o.qg=Math.max(1,+c.qg||2);o.qx=0}}
+  if(ids.length<2)out.errs.push('Competizione '+c.name+': servono almeno 2 squadre (colonna Competizione nel foglio Squadre)');
+  S.comps.push(o)});
+ out.val=vld();out.n={p:S.players.length,t:S.teams.length,c:S.comps.length,pt:S.teams.filter(t=>t.ids.length).length,fa:S.players.filter(p=>!S.teams.some(t=>t.ids.includes(p.id))).length};return out}
+async function xlFile(el){const f=el.files&&el.files[0];el.value='';if(!f||!ovR()||!ovR().cr)return;xlBusy=true;xl=null;dbMsg='Leggo il foglio…';render();
+ try{const I=xlParse(xlRead(await xlZip(await f.arrayBuffer())));
+  const snap=ST.map(n=>[n,JSON.parse(JSON.stringify(S[n]))]);let o;try{o=xlApply(I)}finally{snap.forEach(([n,a])=>S[n]=a);rx();SM=null}
+  if(o.errs.length){dbMsg='';xl={errs:o.errs,file:f.name}}else{dbMsg='';xl={I,o,file:f.name}}}
+ catch(e){dbMsg='';xl={errs:[(e&&e.message)||'File non leggibile.'],file:f.name}}
+ xlBusy=false;render()}
+function xlGo(){if(!xl||!xl.I||!ovR()||!ovR().cr)return;if(cf!=='xl'){cf='xl';return render()}cf=null;const o=xlApply(xl.I);if(o.errs.length){xl={errs:o.errs,file:xl.file};return render()}
+ rvs();save();dbMsg=`Importati ${o.n.p} giocatori, ${o.n.t} squadre e ${o.n.c} competizioni. Ora premi «Esporta il database ufficiale» e pubblicalo.`;xl=null;go('db')}
+function xlH(){const ov=ovR()||{};if(!ov.cr)return '';
+ let h=`<h4>Importa dal foglio Excel</h4><p class="mut">Carica il file Tropsss-giocatori.xlsx compilato: l’app legge i fogli Giocatori, Portieri, Squadre e Competizioni, controlla gli errori e ti mostra un riepilogo prima di cambiare qualcosa. Il foglio è la fonte di verità: l’importazione <b>sostituisce</b> giocatori, squadre, competizioni e statistiche di questo spazio.</p>
+ <div class="row"><label class="chk" style="margin:0"><input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="xlFile(this)" aria-label="Scegli il file Excel"></label></div>`;
+ if(xlBusy)h+='<p class="mut">Controllo il file…</p>';
+ if(xl&&xl.errs)h+=`<div class="warn"><b>${esc(xl.file)}: ${xl.errs.length} ${xl.errs.length===1?'errore':'errori'}. Non è stato cambiato nulla.</b><br>${xl.errs.slice(0,30).map(e=>esc(e)).join('<br>')}${xl.errs.length>30?`<br>… e altri ${xl.errs.length-30}`:''}</div>`;
+ if(xl&&xl.I){const n=xl.o.n;h+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)"><b>${esc(xl.file)}: nessun errore.</b><br>${n.p} giocatori · ${n.t} squadre (${n.pt} con almeno un giocatore) · ${n.c} competizioni${n.fa?`<br>${n.fa} giocatori senza squadra`:''}${xl.o.val.length?'<br>Controllo dati: '+xl.o.val.map(esc).join('; '):''}
+  <div class="row"><button class="${cf==='xl'?'dg':'pri'}" onclick="xlGo()">${cf==='xl'?'Conferma: sostituisci i dati di questo spazio':'Importa nel database'}</button><button onclick="cf=null;xl=null;render()">Annulla</button></div></div>`}
+ return h}
+
 document.addEventListener('click',e=>{const d=document.querySelector('details.mn[open]');if(d&&!d.contains(e.target))d.open=false});
 window.ready=boot();
 </script><script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script></body></html>
