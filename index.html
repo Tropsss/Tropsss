@@ -392,13 +392,59 @@ body{font-size:1rem}
 @media(min-width:760px) and (max-width:899px){main,main.wide{padding:18px 28px 56px}.kp.k5{grid-template-columns:repeat(5,1fr)}}
 @media(min-width:760px){.fl>*{grid-column:auto!important}}
 @media(max-width:640px){.pt .hm2{display:none}}
-.fl{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.fl{grid-template-columns:repeat(auto-fit,minmax(min(100%,172px),1fr))}
 @media(max-width:380px){html{font-size:14.5px}main,main.wide{padding:12px 12px 44px}.kp div{padding:10px 4px}.item .act button{padding:4px 8px}}
 @media(max-width:640px){.pt td:first-child,.pt th:first-child{padding-left:8px}.pt .fmc,.pt .hm{display:none}}
 @media(min-width:900px) and (max-height:700px){#sb{overflow-y:auto}#sb .ni{padding:6px 10px}}
 @media(hover:none){button:hover{transform:none}}
 @supports(padding:max(0px)){main,#tb{padding-left:max(var(--px,16px),env(safe-area-inset-left));padding-right:max(var(--px,16px),env(safe-area-inset-right))}}
-</style><!-- v43 -->
+
+/* ===== v44: stile gestionale ===== */
+:root{--a0:#c0504a;--a1:#c98a45;--a2:#b8a93f;--a3:#58a96b;--a4:#33c27d}
+/* intestazioni di sezione come riquadri */
+#v h3{font:700 .78rem/1 var(--f);letter-spacing:.14em;text-transform:uppercase;color:#aeb9b3;padding:9px 12px;margin:26px 0 10px;background:linear-gradient(90deg,rgba(29,134,80,.16),rgba(29,134,80,0) 70%);border:0;border-left:3px solid var(--acc);border-radius:2px}
+#v h3::before{display:none}
+#v h3 b{font:700 .95rem var(--fc);color:var(--ink)}
+#v h3 .mut{letter-spacing:.02em;text-transform:none;font-size:.8rem}
+/* attributi per macroarea */
+.attg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;margin:0 0 6px}
+.atp{background:var(--sf);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+.ath{display:flex;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(#141414,#0d0d0d);border-bottom:1px solid var(--line)}
+.ath span{flex:1;font:700 .74rem/1 var(--f);letter-spacing:.12em;text-transform:uppercase;color:#cfd8d3}
+.ath b{font:700 1.15rem/1 var(--fc)}
+.ath em{font-style:normal;font-size:.72rem;font-weight:600}.ath em.up{color:var(--a4)}.ath em.dn{color:var(--a0)}
+.atp ul{list-style:none;margin:0;padding:0}
+.atp li{display:flex;justify-content:space-between;gap:10px;padding:5px 12px;font-size:.9rem;border-bottom:1px solid #131313}
+.atp li:nth-child(even){background:#080808}.atp li:last-child{border-bottom:0}
+.atp li span{color:#c4c9c6;min-width:0}
+.atp li b{font:700 .95rem var(--fc);font-variant-numeric:tabular-nums}
+.a0{color:var(--a0)}.a1{color:var(--a1)}.a2{color:var(--a2)}.a3{color:var(--a3)}.a4{color:var(--a4)}
+/* valori colorati per livello (tutta l'app) */
+.q0{background:color-mix(in srgb,var(--a0) 22%,#0b0b0b);color:#f0b3ae}
+.q1{background:color-mix(in srgb,var(--a1) 22%,#0b0b0b);color:#f0cfa3}
+.q2{background:color-mix(in srgb,var(--a3) 24%,#0b0b0b);color:#c4ecd0}
+.q3{background:color-mix(in srgb,var(--a4) 55%,#0b0b0b);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.18) inset}
+/* tabelle più dense, intestazioni fisse */
+.pt thead th{position:sticky;top:0;background:#0d0d0d;z-index:1;border-bottom:1px solid var(--line2)}
+.pt td{padding:6px 6px}
+.pt tbody tr{border-bottom:1px solid #121212}
+.pt tbody tr:hover{background:rgba(29,134,80,.1)}
+/* barra in alto e menu */
+#tb{background:linear-gradient(#0c0c0c,rgba(0,0,0,.94));border-bottom:1px solid var(--line2)}
+#tb .t1{font-size:1.35rem;letter-spacing:.06em}
+#sb .ni{position:relative}
+#sb .ni .nc{margin-left:auto;font-style:normal;font-size:.72rem;font-weight:700;color:#8fa699;background:#101010;border:1px solid #1d1d1d;border-radius:20px;padding:1px 8px;font-variant-numeric:tabular-nums}
+#sb .ni.on .nc{color:#fff;background:rgba(29,134,80,.35);border-color:rgba(43,182,115,.4)}
+#sb .ng{letter-spacing:.2em;color:#667a6f}
+@media(max-width:900px){#sb .ni .nc{display:none}}
+/* schede a riquadro */
+.item{border:1px solid var(--line);border-radius:10px;background:var(--sf)}
+.kp div{background:var(--sf);border-radius:10px}
+.seg{background:transparent;border:0;border-bottom:1px solid var(--line2);border-radius:0;padding:0;gap:0}
+.seg button{border-radius:0;padding:9px 18px;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;box-shadow:none}
+.seg button.on{background:rgba(29,134,80,.12);color:#fff;border-bottom-color:var(--acc2);box-shadow:none}
+.ph{border:1px solid var(--line2);background:linear-gradient(135deg,#101612,#0a0a0a 60%)}
+</style><!-- v44 -->
 </head><body><div id="app"><aside id="sb"></aside><div id="mn"><header id="tb"></header><main><div id="warn" class="warn" hidden></div><div id="v"></div></main></div></div>
 <script>/* v13: evoluzione giocatori, data di nascita, voti */
 const $=s=>document.querySelector(s);
@@ -682,7 +728,7 @@ const NV=[['Panoramica',[['home','Home']]],['Archivio',[['giocatori','Giocatori'
 const NI={db:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',confronto:'<path d="M8 4v16M16 4v16M3 9h5M16 15h5"/>',home:'<path d="M4 11l8-7 8 7v9H4z"/>',mer:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',evo:'<path d="M4 18l5-6 4 3 7-9"/>',alb:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM6 20h12M12 13v7"/>',gen:'<path d="M12 4v16M4 12h16"/>',bak:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',info:'<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',rsa:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>'};
 const TL={home:'Panoramica',giocatori:'Giocatori',squadre:'Squadre',nazionali:'Nazionali',confronto:'Confronto',competizioni:'Competizioni',gioca:'Competizioni',partita:'Partita',schemi:'Promozioni',statistiche:'Statistiche',alb:'Albo d’oro',mer:'Mercato',evo:'Evoluzione',gen:'Generatore',bak:'Backup',db:'Database',info:'Informazioni',rsa:'Azzera tutto'};
 function nav(){const act=tab==='gioca'?'competizioni':tab,sb=$('#sb'),tb=$('#tb');if(!sb||!tb)return;
- sb.innerHTML='<div class="br"><i></i>Tropsss</div><div class="sps"><button class="'+(SP==='u'?'on':'')+'" onclick="setSp(\'u\')">Ufficiale</button><button class="'+(SP==='p'?'on':'')+'" onclick="setSp(\'p\')">Personale</button></div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}</button>`).join('')).join('');
+ sb.innerHTML='<div class="br"><i></i>Tropsss</div><div class="sps"><button class="'+(SP==='u'?'on':'')+'" onclick="setSp(\'u\')">Ufficiale</button><button class="'+(SP==='p'?'on':'')+'" onclick="setSp(\'p\')">Personale</button></div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}${ncnt(k)}</button>`).join('')).join('');
  const c=tab==='gioca'&&cur&&C(cur);tb.innerHTML=`<span class="t1">${esc(c?c.name+' · '+slb(sgY(c)):TL[tab]||'')}</span><button class="spc${dbUp?' up':''}" onclick="go('db')" title="Database in uso">${SP==='u'?'Ufficiale':'Personale'}</button><div class="gsw"><input id="gsi" type="search" placeholder="Cerca giocatori, squadre, competizioni  ( / )" aria-label="Ricerca globale" autocomplete="off" oninput="gsu()" onfocus="gsu()" onkeydown="gsk(event)"><div class="gsd" id="gsd" hidden></div></div>`;
  const a=sb.querySelector('.ni.on');if(a&&sb.scrollWidth>sb.clientWidth&&innerWidth<=900)a.scrollIntoView({inline:'center',block:'nearest'})}
 let tw=null;const nl=id=>{const t=T(id);return t?`<a class="lk" onclick="event.stopPropagation();ot('${id}')">${sw(t)}${esc(t.name)}</a>`:nm(id)},ot=id=>{const t=T(id);if(!t)return;tab=t.nz?'nazionali':'squadre';ed=null;cf=null;vw=null;tw=id;render();scrollTo(0,0)};
@@ -863,7 +909,7 @@ function vsc(p){const t=tmOf(p.id),a=ageC(p),cy=ctxY(p),an=ageI(p),mc=(p.lv&&p.l
  const kp=[[q.a||0,'presenze'],[gk?(q.s||0):(q.g||0),gk?'parate':'gol'],[gk?(q.c||0):(q.as||0),gk?'porte inviolate':'assist'],[av,'voto medio']];
  return `<button class="back" onclick="vw=null;render()">‹ Giocatori</button><div class="ph"><span class="av ${p.role}">${esc(p.name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase())}<small>${p.role}</small></span><div><h2>${esc(p.name)}</h2><p class="mut">${esc(pp(p))}${p.sp&&p.sp.length?' (anche '+p.sp.map(esc).join(', ')+')':''}${a!==null?' · '+a+' anni':''}${a!==null&&cy!==null&&an!==a?` <span title="Età nella stagione ${slb(cy)}">(stagione ${slb(cy)}; oggi ${an})</span>`:''}<br>${t?nm(t.id):'Svincolato'}${p.nat?' · '+esc(p.nat):''}</p></div><span class="ovb" style="--p:${ovr(p)}"><em>${ovr(p)}</em></span></div>
  ${p.inj>0?`<p class="mut" style="color:var(--bad)">Infortunato per altre ${p.inj} partite</p>`:p.sq>0?'<p class="mut" style="color:var(--bad)">Squalificato per la prossima partita</p>':''}
- ${vsx(p)}${tgOf(p).length?`<p class="tgr">${tgChips(p)}</p>`:''}<h3>Parametri</h3>${bars}<h3>Profilo</h3>${rdr(p)}<h3>Carriera</h3><div class="kp">${kp.map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join('')}</div>
+ ${vsx(p)}${tgOf(p).length?`<p class="tgr">${tgChips(p)}</p>`:''}<h3>Attributi</h3>${atg(p,mc)}<h3>Profilo</h3>${rdr(p)}<h3>Carriera</h3><div class="kp">${kp.map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join('')}</div>
  <h3>Andamento del valore</h3>${lch(p.hs)}${evpl(p)}${shh(p)}<div class="row"><button class="pri" onclick="ed='${p.id}';vw=null;render()">Modifica</button><button class="sec" onclick="cmp_('p','${p.id}')">Confronta</button></div>`}
 function vP(){
  if(vw&&P(vw))return vsc(P(vw));
@@ -1760,6 +1806,11 @@ function xlH(){const ov=ovR()||{};if(!ov.cr)return '';
   <div class="row"><button class="${cf==='xl'?'dg':'pri'}" onclick="xlGo()">${cf==='xl'?'Conferma: sostituisci i dati di questo spazio':'Importa nel database'}</button><button onclick="cf=null;xl=null;render()">Annulla</button></div></div>`}
  return h}
 
+/* ===== v44: stile gestionale (attributi per macroarea, contatori nel menu) ===== */
+const aq=v=>v>=80?4:v>=65?3:v>=50?2:v>=35?1:0;
+function atg(p,mc){mc=mc||{};return `<div class="attg">${fl(p.role).map(([k,l,ns])=>{const v=Math.round(mv(p,k)),d=mc[k]||0;
+ return `<div class="atp"><div class="ath"><span>${esc(l)}</span><b class="a${aq(v)}">${v}</b>${d?`<em class="${d>0?'up':'dn'}">${d>0?'▲ +'+d:'▼ '+d}</em>`:''}</div><ul>${ns.map(n=>{const x=Math.round(pv(p,k,n));return `<li><span>${esc(n)}</span><b class="a${aq(x)}">${x}</b></li>`}).join('')}</ul></div>`}).join('')}</div>`}
+const ncnt=k=>{const n=k==='giocatori'?S.players.length:k==='squadre'?S.teams.filter(t=>!t.nz).length:k==='nazionali'?S.teams.filter(t=>t.nz).length:k==='competizioni'?S.comps.length:null;return n==null?'':`<em class="nc">${n}</em>`};
 document.addEventListener('click',e=>{const d=document.querySelector('details.mn[open]');if(d&&!d.contains(e.target))d.open=false});
 window.ready=boot();
 </script><script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script></body></html>
