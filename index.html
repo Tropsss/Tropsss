@@ -364,7 +364,22 @@ tr:last-child td{border-bottom:0}
 @media(prefers-reduced-motion:reduce){#v.fi .item,#v.fi tr,#v.fi .pn,#v.fi .kp div{animation:none!important}.home button:hover{transform:none}}
 @media(max-width:900px){#sb{background:#050505;box-shadow:0 8px 24px rgba(0,0,0,.5)}#sb .ni::before{display:none}#sb .ni.on{background:rgba(29,134,80,.18)}.ph{padding:14px}.av{flex-basis:54px;height:54px;font-size:1.25rem}.ovb{flex-basis:62px;width:62px;height:62px}.ovb em{font-size:1.7rem}}
 @media(max-width:520px){.board{padding:26px 12px}h3{margin-top:28px}.ph h2{font-size:1.7rem}}
-</style><!-- v39 -->
+
+/* v40 */
+.sps{display:flex;gap:2px;margin:0 10px 6px;padding:3px;border:1px solid var(--line);border-radius:10px;background:#080808}
+.sps button{flex:1;border:0;background:none;box-shadow:none;padding:6px 4px;font-size:.82rem;border-radius:8px;color:#bdbdbd}
+.sps button.on{background:linear-gradient(#22995d,#177544);color:#fff}
+.spc{padding:5px 12px;font-size:.82rem;border-radius:999px;white-space:nowrap;border-color:rgba(29,134,80,.5);color:#cfe9db}
+.spc.up::after{content:"";display:inline-block;width:7px;height:7px;margin-left:7px;border-radius:50%;background:#e5c100;box-shadow:0 0 8px #e5c100}
+.dbg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.dbc{display:flex;flex-direction:column;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(#0e0e0e,#080808)}
+.dbc.on{border-color:var(--acc);box-shadow:0 0 0 1px rgba(29,134,80,.35),0 6px 22px rgba(29,134,80,.12)}
+.dbc b{font:700 1.4rem var(--fc)}.dbt{margin-left:10px;padding:2px 9px;border-radius:999px;font:600 .7rem var(--f);letter-spacing:.06em;text-transform:uppercase;background:rgba(29,134,80,.25);color:#cfe9db}
+@media(max-width:640px){.dbg{grid-template-columns:1fr}}
+
+.lkb{margin:0 0 14px;padding:9px 12px;border:1px solid rgba(229,193,0,.35);border-radius:10px;background:rgba(229,193,0,.06);color:#e8d27a;font-size:.88rem}
+.lkb .lk{color:#fff;text-decoration:underline}
+</style><!-- v41 -->
 </head><body><div id="app"><aside id="sb"></aside><div id="mn"><header id="tb"></header><main><div id="warn" class="warn" hidden></div><div id="v"></div></main></div></div>
 <script>/* v13: evoluzione giocatori, data di nascita, voti */
 const $=s=>document.querySelector(s);
@@ -372,7 +387,9 @@ let S={players:[],teams:[],comps:[],systems:[],stats:[],cfg:[]},tab='home',ed=nu
 let idb=null,asked=false,tm=null,busy=Promise.resolve(),PX=null,TX=null,TM=null,NX=null,SM=null;
 const ST=['players','teams','comps','systems','stats','cfg'],cache={players:new Map(),teams:new Map(),comps:new Map(),systems:new Map(),stats:new Map(),cfg:new Map()};
 const warn=m=>{const e=$('#warn');if(e){e.textContent=m;e.hidden=!m}};
-const opn=()=>new Promise((ok,ko)=>{const r=indexedDB.open('simulatore',4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error);r.onblocked=()=>ko(new Error('blocked'))});
+const SPK='tropsss-space';let SP='p',DBJ=null,dbUp=null,dbMsg='';
+const spRd=()=>{try{return window.TROPSSS_SPACE||localStorage.getItem(SPK)}catch(e){return window.TROPSSS_SPACE||null}},dbN=()=>SP==='u'?'simulatore-ufficiale':'simulatore',lsK=()=>SP==='u'?'sim-u':'sim';
+const opn=()=>new Promise((ok,ko)=>{const r=indexedDB.open(dbN(),4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error);r.onblocked=()=>ko(new Error('blocked'))});
 const gall=n=>new Promise((ok,ko)=>{const q=idb.transaction(n).objectStore(n).getAll();q.onsuccess=()=>ok(q.result);q.onerror=()=>ko(q.error)});
 function flush(){return new Promise(ok=>{const ops=[];
  ST.forEach(n=>{const seen=new Set();S[n].forEach(r=>{seen.add(r.id);const j=JSON.stringify(r);if(cache[n].get(r.id)!==j)ops.push([n,r,j])});cache[n].forEach((_,id)=>{if(!seen.has(id))ops.push([n,id,null])})});
@@ -381,13 +398,19 @@ function flush(){return new Promise(ok=>{const ops=[];
  tx.oncomplete=()=>{ops.forEach(([n,x,j])=>j===null?cache[n].delete(x):cache[n].set(x.id,j));warn('');if(!asked){asked=true;try{navigator.storage.persist()}catch(e){}}ok(true)};
  tx.onabort=tx.onerror=()=>{warn('Salvataggio non riuscito: le ultime modifiche potrebbero non essere salvate.');ok(false)}})}
 function save(){PX=TX=TM=NX=null;
- if(!idb){try{localStorage.setItem('sim',JSON.stringify(S));warn('')}catch(e){warn('Spazio esaurito: le ultime modifiche non sono salvate.')}return}
+ if(!idb){try{localStorage.setItem(lsK(),JSON.stringify(S));warn('')}catch(e){warn('Spazio esaurito: le ultime modifiche non sono salvate.')}return}
  clearTimeout(tm);tm=setTimeout(()=>{tm=null;busy=busy.then(flush)},80)}
+async function dbFetch(){try{const r=await fetch('database.json',{cache:'no-cache'});if(!r.ok)return null;const o=await r.json();return o&&o.S?o:null}catch(e){return null}}
+function dbNorm(X){if(!X||!Array.isArray(X.players)||!Array.isArray(X.teams))return null;const N={};ST.forEach(n=>N[n]=(Array.isArray(X[n])?X[n]:[]).filter(r=>r&&typeof r.id==='string'));N.players=N.players.filter(p=>typeof p.name==='string'&&p.role);N.teams=N.teams.filter(t=>Array.isArray(t.ids));N.cfg=N.cfg.filter(x=>x.id!=='ov');return N}
+function dbApply(N,v,ch){ST.forEach(n=>S[n]=JSON.parse(JSON.stringify(N[n])));S.cfg=S.cfg.filter(x=>x.id!=='ov');S.cfg.push({id:'ov',v,ch:ch||undefined});if(!S.cfg.find(x=>x.id==='g'))S.cfg.push({id:'g',date:tdy()});dbUp=null;S.players.forEach(p=>{delete p.ct});rx();SM=null;save()}
+async function seedU(){const ov=S.cfg.find(x=>x.id==='ov');if(ov&&ov.cr)return;const o=DBJ||await dbFetch();DBJ=null;if(!o){if(!ov)dbMsg='Il database ufficiale non è ancora disponibile.';return}const N=dbNorm(o.S);if(!N)return;const v=+o.dbv||1;if(!ov){dbApply(N,v,o.ch);dbMsg=''}else if(v>(ov.v||0))dbUp={N,v,ch:o.ch}}
 async function boot(){
+ SP=spRd();if(SP!=='u'&&SP!=='p'){DBJ=await dbFetch();SP=DBJ?'u':'p';try{localStorage.setItem(SPK,SP)}catch(e){}}
  try{idb=await opn();for(const n of ST){const rows=await gall(n);S[n]=rows;rows.forEach(r=>cache[n].set(r.id,JSON.stringify(r)))}
-  if(!ST.some(n=>S[n].length)){let o=null;try{o=JSON.parse(localStorage.getItem('sim'))}catch(e){}
-   if(o){ST.forEach(n=>S[n]=o[n]||[]);if(await flush()){try{localStorage.removeItem('sim')}catch(e){}}}}}
- catch(e){idb=null;try{const r=localStorage.getItem('sim');if(r)Object.assign(S,JSON.parse(r))}catch(_){}}
+  if(!ST.some(n=>S[n].length)){let o=null;try{o=JSON.parse(localStorage.getItem(lsK()))}catch(e){}
+   if(o){ST.forEach(n=>S[n]=o[n]||[]);if(await flush()){try{localStorage.removeItem(lsK())}catch(e){}}}}}
+ catch(e){idb=null;try{const r=localStorage.getItem(lsK());if(r)Object.assign(S,JSON.parse(r))}catch(_){}}
+ if(SP==='u')await seedU();
  S.players.forEach(p=>{if('ct' in p)delete p.ct});
  {const u=new Set();S.teams.forEach(t=>{if(!t.nz)t.ids=t.ids.filter(i=>!u.has(i)&&u.add(i))})}
  let nc=false;if(!S.cfg||!S.cfg.length){S.cfg=[{id:'g',date:tdy()}];nc=true}
@@ -636,12 +659,12 @@ function flt(e){const q=e.value.toLowerCase().trim();document.querySelectorAll('
 function fs(e,id){const s=$('#'+id),q=e.value.toLowerCase().trim(),cur=s.value;s.innerHTML=S.teams.filter(t=>t.name.toLowerCase().includes(q)).map(t=>`<option value="${t.id}"${t.id===cur?' selected':''}>${esc(t.name)}</option>`).join('')}
 let vw=null;
 function go(t){simM='';tw=null;tab=t;ed=null;cf=null;tf=null;sf=null;pf=null;vw=null;if(t!=='schemi')sy=null;render();const v=$('#v');v.classList.remove('fi');void v.offsetWidth;v.classList.add('fi')}
-const NV=[['Panoramica',[['home','Home']]],['Archivio',[['giocatori','Giocatori'],['squadre','Squadre'],['nazionali','Nazionali'],['confronto','Confronto']]],['Competizione',[['competizioni','Competizioni'],['schemi','Promozioni'],['statistiche','Statistiche'],['alb','Albo d’oro'],['partita','Partita']]],['Gestione',[['mer','Mercato'],['evo','Evoluzione'],['gen','Generatore']]],['Sistema',[['bak','Backup'],['info','Informazioni'],['rsa','Azzera tutto']]]];
-const NI={confronto:'<path d="M8 4v16M16 4v16M3 9h5M16 15h5"/>',home:'<path d="M4 11l8-7 8 7v9H4z"/>',mer:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',evo:'<path d="M4 18l5-6 4 3 7-9"/>',alb:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM6 20h12M12 13v7"/>',gen:'<path d="M12 4v16M4 12h16"/>',bak:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',info:'<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',rsa:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>'};
-const TL={home:'Panoramica',giocatori:'Giocatori',squadre:'Squadre',nazionali:'Nazionali',confronto:'Confronto',competizioni:'Competizioni',gioca:'Competizioni',partita:'Partita',schemi:'Promozioni',statistiche:'Statistiche',alb:'Albo d’oro',mer:'Mercato',evo:'Evoluzione',gen:'Generatore',bak:'Backup',info:'Informazioni',rsa:'Azzera tutto'};
+const NV=[['Panoramica',[['home','Home']]],['Archivio',[['giocatori','Giocatori'],['squadre','Squadre'],['nazionali','Nazionali'],['confronto','Confronto']]],['Competizione',[['competizioni','Competizioni'],['schemi','Promozioni'],['statistiche','Statistiche'],['alb','Albo d’oro'],['partita','Partita']]],['Gestione',[['mer','Mercato'],['evo','Evoluzione'],['gen','Generatore']]],['Sistema',[['db','Database'],['bak','Backup'],['info','Informazioni'],['rsa','Azzera tutto']]]];
+const NI={db:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',confronto:'<path d="M8 4v16M16 4v16M3 9h5M16 15h5"/>',home:'<path d="M4 11l8-7 8 7v9H4z"/>',mer:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',evo:'<path d="M4 18l5-6 4 3 7-9"/>',alb:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM6 20h12M12 13v7"/>',gen:'<path d="M12 4v16M4 12h16"/>',bak:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',info:'<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',rsa:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>'};
+const TL={home:'Panoramica',giocatori:'Giocatori',squadre:'Squadre',nazionali:'Nazionali',confronto:'Confronto',competizioni:'Competizioni',gioca:'Competizioni',partita:'Partita',schemi:'Promozioni',statistiche:'Statistiche',alb:'Albo d’oro',mer:'Mercato',evo:'Evoluzione',gen:'Generatore',bak:'Backup',db:'Database',info:'Informazioni',rsa:'Azzera tutto'};
 function nav(){const act=tab==='gioca'?'competizioni':tab,sb=$('#sb'),tb=$('#tb');if(!sb||!tb)return;
- sb.innerHTML='<div class="br"><i></i>Tropsss</div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}</button>`).join('')).join('');
- const c=tab==='gioca'&&cur&&C(cur);tb.innerHTML=`<span class="t1">${esc(c?c.name+' · '+slb(sgY(c)):TL[tab]||'')}</span><div class="gsw"><input id="gsi" type="search" placeholder="Cerca giocatori, squadre, competizioni  ( / )" aria-label="Ricerca globale" autocomplete="off" oninput="gsu()" onfocus="gsu()" onkeydown="gsk(event)"><div class="gsd" id="gsd" hidden></div></div>`;
+ sb.innerHTML='<div class="br"><i></i>Tropsss</div><div class="sps"><button class="'+(SP==='u'?'on':'')+'" onclick="setSp(\'u\')">Ufficiale</button><button class="'+(SP==='p'?'on':'')+'" onclick="setSp(\'p\')">Personale</button></div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}</button>`).join('')).join('');
+ const c=tab==='gioca'&&cur&&C(cur);tb.innerHTML=`<span class="t1">${esc(c?c.name+' · '+slb(sgY(c)):TL[tab]||'')}</span><button class="spc${dbUp?' up':''}" onclick="go('db')" title="Database in uso">${SP==='u'?'Ufficiale':'Personale'}</button><div class="gsw"><input id="gsi" type="search" placeholder="Cerca giocatori, squadre, competizioni  ( / )" aria-label="Ricerca globale" autocomplete="off" oninput="gsu()" onfocus="gsu()" onkeydown="gsk(event)"><div class="gsd" id="gsd" hidden></div></div>`;
  const a=sb.querySelector('.ni.on');if(a&&sb.scrollWidth>sb.clientWidth&&innerWidth<=900)a.scrollIntoView({inline:'center',block:'nearest'})}
 let tw=null;const nl=id=>{const t=T(id);return t?`<a class="lk" onclick="event.stopPropagation();ot('${id}')">${sw(t)}${esc(t.name)}</a>`:nm(id)},ot=id=>{const t=T(id);if(!t)return;tab=t.nz?'nazionali':'squadre';ed=null;cf=null;vw=null;tw=id;render();scrollTo(0,0)};
 let gsl=[],gsx=0;
@@ -655,7 +678,7 @@ function gsk(e){const d=$('#gsd');if(e.key==='Escape'){e.target.value='';e.targe
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){const i=$('#gsi');if(i){e.preventDefault();i.focus()}}});
 document.addEventListener('click',e=>{const d=$('#gsd');if(d&&!e.target.closest('.gsw'))d.hidden=true});
 const ow=id=>{tab='giocatori';ed=null;cf=null;vw=id;render()};
-function render(){$('#v').innerHTML={home:vH,giocatori:vP,squadre:()=>vT(0),nazionali:()=>vT(1),confronto:vCm,competizioni:vC,partita:vM,gioca:vG,schemi:vY,info:vI,evo:vEv,alb:vAl,gen:vGn,rsa:vRa,mer:vMe,bak:vBk,statistiche:vS}[tab]();document.querySelector('main').classList.toggle('wide',tab==='gioca'||tab==='home'||tab==='statistiche'||(tab==='giocatori'&&!ed&&!vw));nav();if($('#ov'))up();if($('#bd'))uage();if($('#cnt'))ucn();if($('#sp'))usg();if($('#pst'))pst()}
+function render(){$('#v').innerHTML={home:vH,giocatori:vP,squadre:()=>vT(0),nazionali:()=>vT(1),confronto:vCm,competizioni:vC,partita:vM,gioca:vG,schemi:vY,info:vI,evo:vEv,alb:vAl,gen:vGn,rsa:vRa,mer:vMe,bak:vBk,db:vDb,statistiche:vS}[tab]();document.querySelector('main').classList.toggle('wide',tab==='gioca'||tab==='home'||tab==='statistiche'||(tab==='giocatori'&&!ed&&!vw));nav();if($('#ov'))up();if($('#bd'))uage();if($('#cnt'))ucn();if($('#sp'))usg();if($('#pst'))pst()}
 function hst(){const o=[],La=G().last;
  if(La&&T(La.h)&&T(La.a))o.push(['Ultima partita',[[`${nm(La.h)} <b>${La.g[0]} – ${La.g[1]}</b> ${nm(La.a)}`,esc(La.c||'')]]]);
  const nx=S.comps.filter(c=>(c.cal||c.ko)&&!cdone(c)).slice(0,3).map(c=>{const i=c.cal?c.cal.findIndex(r=>r.some(m=>!m.g)):-1;return [esc(c.name),i>=0?`Giornata ${i+1} di ${c.cal.length}`:c.ko?ktn(c.ko[c.ko.length-1].length):'Fase finale da avviare']});
@@ -1599,6 +1622,58 @@ function genRun(){const V=i=>+$('#'+i).value,n=V('gn'),lo=V('gl'),hi=V('gs'),a0=
 const dpt=t=>{const o=r=>t.ids.map(i=>P(i)).filter(p=>p&&p.role===r).map(p=>ovr(p)).sort((a,b)=>b-a),av=(a,n)=>{const x=a.slice(0,n);return x.length?x.reduce((s,y)=>s+y,0)/x.length:0};return[av(o('POR'),1),av(o('DIF'),4),av(o('CEN'),3),av(o('ATT'),3)]};
 function rdrT(t){if(!t.ids.length)return '';const NM_=['Portiere','Difesa','Centrocampo','Attacco'],v=dpt(t).map(Math.round),ot=S.teams.filter(x=>!x.nz&&x.ids.length),av=NM_.map((_,i)=>ot.length?ot.reduce((s,x)=>s+dpt(x)[i],0)/ot.length:0);
  return `<h3>Reparti</h3>${radar(NM_.map((l,i)=>l+' '+v[i]),[ot.length>1?{v:av,c:'#8a8a8a',d:1}:null,{v,c:'var(--acc)'}].filter(Boolean))}<p class="mut" style="text-align:center;margin:0">${ot.length>1?'Linea continua: '+esc(t.name)+' · tratteggiata: media di tutte le squadre':'Valore medio dei titolari per reparto'}</p>`}
+
+/* ===== v40: database ufficiale e personale ===== */
+async function setSp(s){if(s===SP)return;if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;try{localStorage.setItem(SPK,s)}catch(e){}
+ window.TROPSSS_SPACE=s;try{if(idb)idb.close()}catch(e){}idb=null;ST.forEach(n=>{S[n]=[];cache[n].clear()});rvs();tw=null;dbUp=null;dbMsg='';tab='home';await boot()}
+const ovR=()=>S.cfg.find(x=>x.id==='ov')||null;
+async function dbReset(){const o=await dbFetch();if(!o){dbMsg='Non riesco a scaricare il database ufficiale: controlla la connessione.';cf=null;return render()}const N=dbNorm(o.S);if(!N){dbMsg='Il database ufficiale non è valido.';cf=null;return render()}
+ dbApply(N,+o.dbv||1,o.ch);rvs();dbMsg='Database ufficiale ripristinato.';go('db')}
+function dbUpd(){if(!dbUp)return;if(cf!=='dbup'){cf='dbup';return render()}dbApply(dbUp.N,dbUp.v,dbUp.ch);rvs();dbMsg='Database ufficiale aggiornato.';go('db')}
+function dbCr(on){const o=ovR();if(o)o.cr=on?1:undefined;else S.cfg.push({id:'ov',v:0,cr:on?1:undefined});if(!on&&o)o.v=0;save();dbMsg='';render()}
+async function dbExp(){const o={app:'simulatore',dbv:Math.floor(Date.now()/1000),ch:(ovR()||{}).ch||undefined,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'):S[n]);dbMsg=await dlF('database.json',JSON.stringify(o),'application/json')==='File pronto.'?`Database esportato (${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni). Mandami il file e scrivimi «pubblica sul sito».`:'Download non riuscito.';render()}
+async function dbCopy(){if(cf!=='dbcp'){cf='dbcp';return render()}cf=null;if(!idb){dbMsg='Copia non possibile: questo browser non permette l’archivio esteso.';return render()}
+ if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;
+ try{const d=await new Promise((ok,ko)=>{const r=indexedDB.open('simulatore',4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)});
+  const tx=d.transaction(ST,'readwrite');ST.forEach(n=>{const s=tx.objectStore(n);s.clear();S[n].forEach(r=>{if(!(n==='cfg'&&r.id==='ov'))s.put(JSON.parse(JSON.stringify(r)))})});
+  await new Promise((ok,ko)=>{tx.oncomplete=ok;tx.onerror=tx.onabort=()=>ko(tx.error)});d.close();dbMsg='Copiato nel database personale. Passa a «Personale» per usarlo: lì puoi modificarlo senza toccare l’ufficiale.'}
+ catch(e){dbMsg='Copia non riuscita.'}render()}
+function vDb(){const u=SP==='u',ov=ovR()||{},n=`${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni`;
+ const card=(k,t,d)=>`<div class="dbc${SP===k?' on':''}"><div><b>${t}</b>${SP===k?'<span class="dbt">In uso</span>':''}<p class="mut">${d}</p></div>${SP===k?'':`<button class="pri" onclick="setSp('${k}')">Passa a ${t.toLowerCase()}</button>`}</div>`;
+ let b=`${hd('Database')}<p class="mut">Tropsss ha due spazi separati. Ognuno ha i suoi dati, le sue stagioni e le sue statistiche: cambiando spazio non perdi nulla dell’altro.</p>
+ <div class="dbg">${card('u','Ufficiale','Giocatori, squadre e competizioni già pronti, creati dall’autore. Parti da qui per giocare subito: puoi simulare partite e stagioni, ma i dati sono in sola lettura. Le tue partite restano solo sul tuo dispositivo.')}${card('p','Personale','Parte completamente vuoto: crei tu tutto, oppure importi dati, usi il Generatore o copi qui l’ufficiale.')}</div>
+ <p class="mut">Spazio attuale: <b style="color:var(--ink)">${u?'Ufficiale':'Personale'}</b> · ${n}</p>${dbMsg?`<p style="color:var(--ink)">${esc(dbMsg)}</p>`:''}`;
+ if(u){b+=`<h3>Database ufficiale</h3><p class="mut">${ov.cr?'Modalità creatore attiva: questo spazio è la tua copia di lavoro e non scarica gli aggiornamenti.':ov.v?(ov.v>1e9?'Versione del '+fd(new Date(ov.v*1000).toISOString().slice(0,10)):'Versione '+ov.v)+'.':'Non ancora scaricato.'}</p>`;
+  if(dbUp)b+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)">È disponibile una nuova versione del database ufficiale. Aggiornando, i dati e le stagioni di questo spazio vengono sostituiti.<div class="row"><button class="${cf==='dbup'?'dg':'pri'}" onclick="dbUpd()">${cf==='dbup'?'Conferma: aggiorna e sostituisci':'Aggiorna ora'}</button>${cf==='dbup'?'<button onclick="cf=null;render()">Annulla</button>':''}</div></div>`;
+  if(!ov.cr)b+=`<div class="row"><button class="${cf==='dbrs'?'dg':''}" onclick="if(cf!=='dbrs'){cf='dbrs';render()}else{cf=null;dbReset()}">${cf==='dbrs'?'Conferma: ripristina l’ufficiale':'Ripristina il database ufficiale'}</button>${cf==='dbrs'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>`;
+  b+=`<div class="row"><button class="${cf==='dbcp'?'dg':''}" onclick="dbCopy()">${cf==='dbcp'?'Conferma: sostituisci il database personale':'Copia nel mio database personale'}</button>${cf==='dbcp'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>
+  <h3>Per l’autore</h3>${ov.cr?`<p class="mut">Modalità creatore attiva: puoi modificare tutto in questo spazio. Quando hai finito, esporta il file. Nel file va tutto ciò che vedi qui, stagioni e statistiche comprese: azzera prima ciò che non vuoi pubblicare.</p><div class="row"><button class="pri" onclick="dbExp()">Esporta il database ufficiale</button><button onclick="dbCr(false)">Disattiva la modalità creatore</button></div>
+  <h4>Codice creatore</h4><p class="mut">${ov.ch?'Un codice è impostato: serve per attivare la modalità creatore su altri dispositivi e viene pubblicato col database solo come impronta.':'Nessun codice impostato: chiunque potrebbe attivare la modalità creatore. Impostane uno lungo (almeno 8 caratteri).'}</p><label>${ov.ch?'Nuovo codice':'Codice'}<input id="cdn" type="password" autocomplete="new-password"></label><div class="row" style="margin-top:0"><button onclick="dbSetCode()">${ov.ch?'Cambia il codice':'Imposta il codice'}</button></div>`
+  :ov.ch?`<p class="mut">Questo spazio è in sola lettura. Se sei l’autore inserisci il codice creatore.</p><label>Codice creatore<input id="cdc" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')dbUnlock()"></label><div class="row" style="margin-top:0"><button onclick="dbUnlock()">Attiva la modalità creatore</button></div>`
+  :`<p class="mut">Nessun codice creatore impostato.</p><div class="row"><button onclick="dbCr(true)">Attiva la modalità creatore</button></div>`}`}
+ else b+=`<h3>Database personale</h3><p class="mut">Solo tuo e inizialmente vuoto. Crea giocatori e squadre a mano, importali da un backup o da un file CSV, oppure generali nel Generatore.</p>`;
+ return b}
+
+/* ===== v41: sola lettura per l'ufficiale, codice creatore ===== */
+function sha(s){const K=[],H=[];{let n=2,c=0;while(c<64){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p){if(c<8)H[c]=(Math.pow(n,.5)%1)*4294967296|0;K[c]=(Math.pow(n,1/3)%1)*4294967296|0;c++}n++}}
+ const b=unescape(encodeURIComponent(s)),L=b.length,w=[];for(let i=0;i<L;i++)w[i>>2]|=b.charCodeAt(i)<<(24-(i%4)*8);w[L>>2]|=0x80<<(24-(L%4)*8);const N=(((L+8)>>6)+1)*16;w[N-1]=L*8;for(let i=0;i<N;i++)w[i]=w[i]|0;
+ const h=H.slice(),rr=(x,n)=>x>>>n|x<<(32-n);
+ for(let o=0;o<N;o+=16){const m=w.slice(o,o+16);for(let i=16;i<64;i++){const a=m[i-15],c=m[i-2];m[i]=(m[i-16]+(rr(a,7)^rr(a,18)^a>>>3)+m[i-7]+(rr(c,17)^rr(c,19)^c>>>10))|0}
+  let[a,bb,c,d,e,f,g,hh]=h;for(let i=0;i<64;i++){const t1=(hh+(rr(e,6)^rr(e,11)^rr(e,25))+((e&f)^(~e&g))+K[i]+m[i])|0,t2=((rr(a,2)^rr(a,13)^rr(a,22))+((a&bb)^(a&c)^(bb&c)))|0;hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=bb;bb=a;a=(t1+t2)|0}
+  h[0]=(h[0]+a)|0;h[1]=(h[1]+bb)|0;h[2]=(h[2]+c)|0;h[3]=(h[3]+d)|0;h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0}
+ return h.map(x=>('00000000'+(x>>>0).toString(16)).slice(-8)).join('')}
+const chash=c=>{let x=sha('tropsss/v1|'+c);for(let i=0;i<3000;i++)x=sha(x+c);return x};
+function dbSetCode(){const v=($('#cdn')||{}).value||'';if(v.length<8){dbMsg='Il codice deve avere almeno 8 caratteri.';return render()}const o=ovR();if(!o)return;o.ch=chash(v);save();dbMsg='Codice salvato. Esporta di nuovo il database per pubblicarlo.';render()}
+function dbUnlock(){const o=ovR(),v=($('#cdc')||{}).value||'';if(o&&o.ch&&chash(v)!==o.ch){dbMsg='Codice errato.';return render()}dbCr(true)}
+const lkd=()=>SP==='u'&&!(ovR()&&ovR().cr);
+const LKM='Il database ufficiale è in sola lettura. Per modificare i dati copialo nel tuo database personale.';
+['mSig','mRel','mTrf','bkApp','sP','dP','sT','dT','sC','dC','sY','dY','seed','bkA','impGo','genRun','rsa'].forEach(n=>{const f=window[n];if(typeof f!=='function')throw new Error('guardia: '+n);window[n]=function(){if(lkd()){dbMsg=LKM;cf=null;ed=null;go('db');return}return f.apply(this,arguments)}});
+{const r0=render;window.render=function(){if(lkd())ed=null;r0();if(lkd())lkUi()}}
+function lkUi(){const v=$('#v');if(!v||tab==='db')return;
+ if(['gen','mer','rsa'].includes(tab)){v.innerHTML=`<h2>${esc(TL[tab]||'')}</h2><div class="empty">${LKM}<div class="row" style="justify-content:center"><button class="pri" onclick="go('db')">Vai a Database</button></div></div>`;return}
+ v.querySelectorAll('button').forEach(b=>{const o=b.getAttribute('onclick')||'';if(/(^|;)\s*ed='|\b(dP|dT|dC|dY|bkT|impT|seed)\(/.test(o))b.hidden=true});
+ if(tab==='bak'){const hs=[...v.querySelectorAll('h3')].find(x=>/Importa/.test(x.textContent));if(hs){let n=hs;const rm=[];while(n){rm.push(n);n=n.nextElementSibling}rm.forEach(x=>x.remove())}}
+ if(['giocatori','squadre','nazionali','competizioni','schemi','bak'].includes(tab))v.insertAdjacentHTML('afterbegin',`<p class="lkb">${LKM} <a class="lk" onclick="go('db')">Database</a></p>`)}
 document.addEventListener('click',e=>{const d=document.querySelector('details.mn[open]');if(d&&!d.contains(e.target))d.open=false});
 window.ready=boot();
 </script><script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script></body></html>
