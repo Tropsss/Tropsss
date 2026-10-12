@@ -469,7 +469,7 @@ body.gt #app,body.gt #warn{display:none}
 
 .btn{display:inline-block;padding:9px 16px;border:1px solid var(--line2);border-radius:10px;background:#101010;color:var(--ink);text-decoration:none;font-weight:500}
 .btn:hover{border-color:var(--acc)}
-</style><!-- v46 -->
+</style><!-- v47 -->
 </head><body><div id="app"><aside id="sb"></aside><div id="mn"><header id="tb"></header><main><div id="warn" class="warn" hidden></div><div id="v"></div></main></div></div>
 <script>/* v13: evoluzione giocatori, data di nascita, voti */
 const $=s=>document.querySelector(s);
@@ -653,7 +653,7 @@ function vRa(){const n=S.players.length,t=S.teams.length,c=S.comps.length;
  return `${hd('Azzera tutto')}<p class="mut" style="font-size:1rem">Questa operazione cancella tutto quello che hai creato: <b style="color:var(--ink)">${n} giocatori, ${t} squadre e nazionali, ${c} competizioni</b>, gli schemi di promozione, le statistiche, l’albo d’oro, i ritirati, la data di gioco e le opzioni di fine stagione.</p><p class="mut" style="font-size:1rem;color:var(--bad)">Non si può annullare. Dopo l’azzeramento l’app torna vuota, come alla prima apertura.</p>
  <div class="row"><button class="${cf==='rsa'?'dg':''}" onclick="rsa()">${cf==='rsa'?'Conferma: cancella tutto per sempre':'Azzera tutto'}</button>${cf==='rsa'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>`}
 function rsa(){if(cf!=='rsa'){cf='rsa';return render()}
- S.players=[];S.teams=[];S.comps=[];S.systems=[];S.stats=[];S.cfg=[{id:'g',date:tdy()}];
+ S.players=[];S.teams=[];S.comps=[];S.systems=[];S.stats=[];S.cfg=[...S.cfg.filter(x=>x.id==='ov'||x.id==='acc'),{id:'g',date:tdy()}];
  rvs();rx();save();rsok=true;go('home')}
 function rvs(){cur=null;ed=null;tf=null;sf=null;sy=null;pf=null;vw=null;cf=null;gres=null;evr=null;evm_=null;alt='c';alf='';kvm='t';ph='lg';rd=0;op=new Set();fv={q:'',t:'',r:'',a:'',b:'',s:'nome'};mt='';mq='';mrl='';RMc=null;RMn=-1}
 /* v28: mercato manuale, backup */
@@ -678,7 +678,7 @@ function vMe(){const cl_=S.teams.filter(t=>!t.nz&&tY(t)!==null).sort((a,b)=>a.na
  <p class="mut" style="margin:-6px 0 12px">${t?'Il giocatore ingaggiato va a '+esc(t.name)+'.'+(hid?` Nascosti ${hid} svincolati di un’altra stagione.`:''):'Scegli prima una squadra per poter ingaggiare.'}</p>
  ${fr.length?fr.slice(0,40).map(p=>row(p,`<button${t?'':' disabled'} onclick="mSig('${p.id}')">Ingaggia</button>`)).join('')+(fr.length>40?`<p class="mut">Mostrati i primi 40 per valore: usa i filtri per restringere.</p>`:''):'<div class="empty">Nessun giocatore svincolato.</div>'}`}
 let bkm='',bkd=null;
-async function bkExp(){const o={app:'simulatore',v:1,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=S[n]);const j=JSON.stringify(o),fn='tropsss-'+new Date().toISOString().slice(0,10)+'.json',ok=`Backup creato: ${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni (${fmt(j.length)}).`;
+async function bkExp(){const o={app:'simulatore',v:1,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'&&x.id!=='acc'):S[n]);const j=JSON.stringify(o),fn='tropsss-'+new Date().toISOString().slice(0,10)+'.json',ok=`Backup creato: ${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni (${fmt(j.length)}).`;
  let dl=null;try{dl=window.claude&&claude.use?await claude.use('downloads'):null}catch(e){}
  if(dl){try{await dl.save({filename:fn,data:j});bkm=ok}catch(e){bkm=e&&e.code==='declined'?'Download annullato.':'Download non riuscito: usa «Copia negli appunti».'}return render()}
  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([j],{type:'application/json'}));a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);bkm=ok}catch(e){bkm='Download non riuscito: usa «Copia negli appunti».'}render()}
@@ -690,7 +690,7 @@ function bkPar(txt){bkd=null;let o;try{o=JSON.parse(txt)}catch(e){bkm='File non 
  bkd=N;bkm='';cf='bki';render()}
 function bkFile(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>bkPar(String(r.result));r.onerror=()=>{bkm='Lettura del file non riuscita.';render()};r.readAsText(f)}
 function bkPaste(){bkPar($('#bkt').value)}
-function bkApp(){if(!bkd)return;ST.forEach(n=>S[n]=bkd[n]);if(!S.cfg.find(x=>x.id==='g'))S.cfg.push({id:'g',date:tdy()});bkd=null;rvs();rx();SM=null;save();bkm='Backup importato.';go('bak')}
+function bkApp(){if(!bkd)return;const keep=S.cfg.filter(x=>x.id==='ov'||x.id==='acc');ST.forEach(n=>S[n]=bkd[n]);S.cfg=S.cfg.filter(x=>x.id!=='ov'&&x.id!=='acc').concat(keep);if(!S.cfg.find(x=>x.id==='g'))S.cfg.push({id:'g',date:tdy()});bkd=null;rvs();rx();SM=null;save();bkm='Backup importato.';go('bak')}
 function vBk(){const d=bkd;
  return `${hd('Backup')}<h3>Esporta</h3><p class="mut">Salva tutto l’archivio (giocatori, squadre, competizioni, statistiche, albo, impostazioni) in un unico file.</p><div class="row"><button class="pri" onclick="bkExp()">Scarica il backup</button><button onclick="bkCp()">Copia negli appunti</button></div>
  ${bkm?`<p class="mut" style="color:var(--ink)">${esc(bkm)}</p>`:''}
