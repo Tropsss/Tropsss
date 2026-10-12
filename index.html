@@ -444,7 +444,32 @@ body{font-size:1rem}
 .seg button{border-radius:0;padding:9px 18px;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;box-shadow:none}
 .seg button.on{background:rgba(29,134,80,.12);color:#fff;border-bottom-color:var(--acc2);box-shadow:none}
 .ph{border:1px solid var(--line2);background:linear-gradient(135deg,#101612,#0a0a0a 60%)}
-</style><!-- v44 -->
+
+/* ===== v45: schermata iniziale ===== */
+body.gt #app,body.gt #warn{display:none}
+#gate{position:fixed;inset:0;z-index:100;overflow:auto;background:radial-gradient(1200px 600px at 50% -10%,rgba(29,134,80,.16),transparent 60%),#000;display:flex;justify-content:center;padding:max(28px,env(safe-area-inset-top)) 18px 40px}
+.gw{width:100%;max-width:1040px;margin:auto 0}
+.gb{display:flex;align-items:center;justify-content:center;gap:12px;font:800 2.4rem/1 var(--fc);letter-spacing:.12em;text-transform:uppercase}
+.gb i{width:16px;height:16px;border-radius:4px;background:var(--acc2);box-shadow:0 0 14px rgba(43,182,115,.6)}
+.gs{text-align:center;color:var(--mut);margin:10px 0 30px;letter-spacing:.08em}
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gc{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;padding:22px 20px 24px;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(#0f0f0f,#080808);box-shadow:var(--sh);transition:border-color .15s,transform .15s}
+.gc:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:var(--glow)}
+.gc svg{width:34px;height:34px;fill:none;stroke:var(--acc2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gc b{font:700 1.5rem var(--fc);letter-spacing:.02em}
+.gc p{margin:0;color:#a9b2ad;font-size:.92rem;line-height:1.45;font-weight:400}
+.gf{max-width:420px;margin:26px auto 0;padding:20px;border:1px solid var(--line2);border-radius:14px;background:#0a0a0a}
+.gf h3{margin-top:0}
+.ge{color:var(--bad);margin:6px 0}
+.sps.ar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+.sps.ar span{display:flex;flex-direction:column;line-height:1.15}.sps.ar small{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#667a6f}.sps.ar b{font-size:.95rem}
+.sps.ar button{flex:none;padding:5px 10px;font-size:.78rem}
+@media(max-width:820px){.gg{grid-template-columns:1fr}.gb{font-size:1.9rem}.gc{padding:16px}}
+@media(max-width:900px){.sps.ar{display:none}}
+
+.btn{display:inline-block;padding:9px 16px;border:1px solid var(--line2);border-radius:10px;background:#101010;color:var(--ink);text-decoration:none;font-weight:500}
+.btn:hover{border-color:var(--acc)}
+</style><!-- v46 -->
 </head><body><div id="app"><aside id="sb"></aside><div id="mn"><header id="tb"></header><main><div id="warn" class="warn" hidden></div><div id="v"></div></main></div></div>
 <script>/* v13: evoluzione giocatori, data di nascita, voti */
 const $=s=>document.querySelector(s);
@@ -453,7 +478,7 @@ let idb=null,asked=false,tm=null,busy=Promise.resolve(),PX=null,TX=null,TM=null,
 const ST=['players','teams','comps','systems','stats','cfg'],cache={players:new Map(),teams:new Map(),comps:new Map(),systems:new Map(),stats:new Map(),cfg:new Map()};
 const warn=m=>{const e=$('#warn');if(e){e.textContent=m;e.hidden=!m}};
 const SPK='tropsss-space';let SP='p',DBJ=null,dbUp=null,dbMsg='';
-const spRd=()=>{try{return window.TROPSSS_SPACE||localStorage.getItem(SPK)}catch(e){return window.TROPSSS_SPACE||null}},dbN=()=>SP==='u'?'simulatore-ufficiale':'simulatore',lsK=()=>SP==='u'?'sim-u':'sim';
+const spRd=()=>window.TROPSSS_SPACE||null,dbN=()=>SP==='u'?'simulatore-ufficiale':SP==='a'?'simulatore-privato':'simulatore',lsK=()=>SP==='u'?'sim-u':SP==='a'?'sim-a':'sim';
 const opn=()=>new Promise((ok,ko)=>{const r=indexedDB.open(dbN(),4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error);r.onblocked=()=>ko(new Error('blocked'))});
 const gall=n=>new Promise((ok,ko)=>{const q=idb.transaction(n).objectStore(n).getAll();q.onsuccess=()=>ok(q.result);q.onerror=()=>ko(q.error)});
 function flush(){return new Promise(ok=>{const ops=[];
@@ -466,16 +491,17 @@ function save(){PX=TX=TM=NX=null;
  if(!idb){try{localStorage.setItem(lsK(),JSON.stringify(S));warn('')}catch(e){warn('Spazio esaurito: le ultime modifiche non sono salvate.')}return}
  clearTimeout(tm);tm=setTimeout(()=>{tm=null;busy=busy.then(flush)},80)}
 async function dbFetch(){try{const r=await fetch('database.json',{cache:'no-cache'});if(!r.ok)return null;const o=await r.json();return o&&o.S?o:null}catch(e){return null}}
-function dbNorm(X){if(!X||!Array.isArray(X.players)||!Array.isArray(X.teams))return null;const N={};ST.forEach(n=>N[n]=(Array.isArray(X[n])?X[n]:[]).filter(r=>r&&typeof r.id==='string'));N.players=N.players.filter(p=>typeof p.name==='string'&&p.role);N.teams=N.teams.filter(t=>Array.isArray(t.ids));N.cfg=N.cfg.filter(x=>x.id!=='ov');return N}
-function dbApply(N,v,ch){ST.forEach(n=>S[n]=JSON.parse(JSON.stringify(N[n])));S.cfg=S.cfg.filter(x=>x.id!=='ov');S.cfg.push({id:'ov',v,ch:ch||undefined});if(!S.cfg.find(x=>x.id==='g'))S.cfg.push({id:'g',date:tdy()});dbUp=null;S.players.forEach(p=>{delete p.ct});rx();SM=null;save()}
-async function seedU(){const ov=S.cfg.find(x=>x.id==='ov');if(ov&&ov.cr)return;const o=DBJ||await dbFetch();DBJ=null;if(!o){if(!ov)dbMsg='Il database ufficiale non è ancora disponibile.';return}const N=dbNorm(o.S);if(!N)return;const v=+o.dbv||1;if(!ov){dbApply(N,v,o.ch);dbMsg=''}else if(v>(ov.v||0))dbUp={N,v,ch:o.ch}}
+function dbNorm(X){if(!X||!Array.isArray(X.players)||!Array.isArray(X.teams))return null;const N={};ST.forEach(n=>N[n]=(Array.isArray(X[n])?X[n]:[]).filter(r=>r&&typeof r.id==='string'));N.players=N.players.filter(p=>typeof p.name==='string'&&p.role);N.teams=N.teams.filter(t=>Array.isArray(t.ids));N.cfg=N.cfg.filter(x=>x.id!=='ov'&&x.id!=='acc');return N}
+function dbApply(N,v,acc){ST.forEach(n=>S[n]=JSON.parse(JSON.stringify(N[n])));S.cfg=S.cfg.filter(x=>x.id!=='ov'&&x.id!=='acc');S.cfg.push({id:'ov',v});if(SP==='a'&&Array.isArray(acc)&&acc.length)S.cfg.push({id:'acc',l:acc.map(a=>({n:a.n,h:a.h,r:a.r}))});if(!S.cfg.find(x=>x.id==='g'))S.cfg.push({id:'g',date:tdy()});dbUp=null;S.players.forEach(p=>{delete p.ct});rx();SM=null;save()}
+async function seedU(){let ov=S.cfg.find(x=>x.id==='ov');if(ov&&ov.cr){ov.cr=undefined;ov.v=0}const o=DBJ||await dbFetch();DBJ=null;if(!o){if(!ov)dbMsg='Il database ufficiale non è ancora disponibile.';return}const N=dbNorm(o.S);if(!N)return;if(Array.isArray(o.acc))try{localStorage.setItem(ACK,JSON.stringify(o.acc))}catch(e){}const v=+o.dbv||1;if(!ov){dbApply(N,v,o.acc);dbMsg=''}else if(v>(ov.v||0))dbUp={N,v,acc:o.acc}}
 async function boot(){
- SP=spRd();if(SP!=='u'&&SP!=='p'){DBJ=await dbFetch();SP=DBJ?'u':'p';try{localStorage.setItem(SPK,SP)}catch(e){}}
+ SP=spRd();if(SP!=='u'&&SP!=='p'&&SP!=='a'){gateShow();return}
  try{idb=await opn();for(const n of ST){const rows=await gall(n);S[n]=rows;rows.forEach(r=>cache[n].set(r.id,JSON.stringify(r)))}
   if(!ST.some(n=>S[n].length)){let o=null;try{o=JSON.parse(localStorage.getItem(lsK()))}catch(e){}
    if(o){ST.forEach(n=>S[n]=o[n]||[]);if(await flush()){try{localStorage.removeItem(lsK())}catch(e){}}}}}
  catch(e){idb=null;try{const r=localStorage.getItem(lsK());if(r)Object.assign(S,JSON.parse(r))}catch(_){}}
- if(SP==='u')await seedU();
+ if(SP==='u'||SP==='a')await seedU();
+ accEns();
  S.players.forEach(p=>{if('ct' in p)delete p.ct});
  {const u=new Set();S.teams.forEach(t=>{if(!t.nz)t.ids=t.ids.filter(i=>!u.has(i)&&u.add(i))})}
  let nc=false;if(!S.cfg||!S.cfg.length){S.cfg=[{id:'g',date:tdy()}];nc=true}
@@ -728,8 +754,8 @@ const NV=[['Panoramica',[['home','Home']]],['Archivio',[['giocatori','Giocatori'
 const NI={db:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',confronto:'<path d="M8 4v16M16 4v16M3 9h5M16 15h5"/>',home:'<path d="M4 11l8-7 8 7v9H4z"/>',mer:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',evo:'<path d="M4 18l5-6 4 3 7-9"/>',alb:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM6 20h12M12 13v7"/>',gen:'<path d="M12 4v16M4 12h16"/>',bak:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',info:'<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',rsa:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>'};
 const TL={home:'Panoramica',giocatori:'Giocatori',squadre:'Squadre',nazionali:'Nazionali',confronto:'Confronto',competizioni:'Competizioni',gioca:'Competizioni',partita:'Partita',schemi:'Promozioni',statistiche:'Statistiche',alb:'Albo d’oro',mer:'Mercato',evo:'Evoluzione',gen:'Generatore',bak:'Backup',db:'Database',info:'Informazioni',rsa:'Azzera tutto'};
 function nav(){const act=tab==='gioca'?'competizioni':tab,sb=$('#sb'),tb=$('#tb');if(!sb||!tb)return;
- sb.innerHTML='<div class="br"><i></i>Tropsss</div><div class="sps"><button class="'+(SP==='u'?'on':'')+'" onclick="setSp(\'u\')">Ufficiale</button><button class="'+(SP==='p'?'on':'')+'" onclick="setSp(\'p\')">Personale</button></div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}${ncnt(k)}</button>`).join('')).join('');
- const c=tab==='gioca'&&cur&&C(cur);tb.innerHTML=`<span class="t1">${esc(c?c.name+' · '+slb(sgY(c)):TL[tab]||'')}</span><button class="spc${dbUp?' up':''}" onclick="go('db')" title="Database in uso">${SP==='u'?'Ufficiale':'Personale'}</button><div class="gsw"><input id="gsi" type="search" placeholder="Cerca giocatori, squadre, competizioni  ( / )" aria-label="Ricerca globale" autocomplete="off" oninput="gsu()" onfocus="gsu()" onkeydown="gsk(event)"><div class="gsd" id="gsd" hidden></div></div>`;
+ sb.innerHTML='<div class="br"><i></i>Tropsss</div><div class="sps ar"><span><small>Area</small><b>'+ARN[SP]+'</b></span><button onclick="gateOpen()" title="Torna alla scelta dell’area">Cambia</button></div>'+NV.map(([g,l])=>`<div class="ng">${g}</div>`+l.map(([k,n])=>`<button class="ni${k===act?' on':''}${k==='rsa'?' dgr':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]||NI[k]||''}</svg>${n}${ncnt(k)}</button>`).join('')).join('');
+ const c=tab==='gioca'&&cur&&C(cur);tb.innerHTML=`<span class="t1">${esc(c?c.name+' · '+slb(sgY(c)):TL[tab]||'')}</span><button class="spc${dbUp?' up':''}" onclick="go('db')" title="Area in uso">${ARN[SP]}${SP==='a'&&AUTH?' · '+esc(AUTH.n):''}</button><div class="gsw"><input id="gsi" type="search" placeholder="Cerca giocatori, squadre, competizioni  ( / )" aria-label="Ricerca globale" autocomplete="off" oninput="gsu()" onfocus="gsu()" onkeydown="gsk(event)"><div class="gsd" id="gsd" hidden></div></div>`;
  const a=sb.querySelector('.ni.on');if(a&&sb.scrollWidth>sb.clientWidth&&innerWidth<=900)a.scrollIntoView({inline:'center',block:'nearest'})}
 let tw=null;const nl=id=>{const t=T(id);return t?`<a class="lk" onclick="event.stopPropagation();ot('${id}')">${sw(t)}${esc(t.name)}</a>`:nm(id)},ot=id=>{const t=T(id);if(!t)return;tab=t.nz?'nazionali':'squadre';ed=null;cf=null;vw=null;tw=id;render();scrollTo(0,0)};
 let gsl=[],gsx=0;
@@ -1689,35 +1715,19 @@ function rdrT(t){if(!t.ids.length)return '';const NM_=['Portiere','Difesa','Cent
  return `<h3>Reparti</h3>${radar(NM_.map((l,i)=>l+' '+v[i]),[ot.length>1?{v:av,c:'#8a8a8a',d:1}:null,{v,c:'var(--acc)'}].filter(Boolean))}<p class="mut" style="text-align:center;margin:0">${ot.length>1?'Linea continua: '+esc(t.name)+' · tratteggiata: media di tutte le squadre':'Valore medio dei titolari per reparto'}</p>`}
 
 /* ===== v40: database ufficiale e personale ===== */
-async function setSp(s){if(s===SP)return;if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;try{localStorage.setItem(SPK,s)}catch(e){}
+async function setSp(s){if(s===SP)return;if(s==='a'&&!AUTH){gateOpen();return}if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;try{localStorage.setItem(SPK,s)}catch(e){}
  window.TROPSSS_SPACE=s;try{if(idb)idb.close()}catch(e){}idb=null;ST.forEach(n=>{S[n]=[];cache[n].clear()});rvs();tw=null;dbUp=null;dbMsg='';tab='home';await boot()}
 const ovR=()=>S.cfg.find(x=>x.id==='ov')||null;
 async function dbReset(){const o=await dbFetch();if(!o){dbMsg='Non riesco a scaricare il database ufficiale: controlla la connessione.';cf=null;return render()}const N=dbNorm(o.S);if(!N){dbMsg='Il database ufficiale non è valido.';cf=null;return render()}
- dbApply(N,+o.dbv||1,o.ch);rvs();dbMsg='Database ufficiale ripristinato.';go('db')}
-function dbUpd(){if(!dbUp)return;if(cf!=='dbup'){cf='dbup';return render()}dbApply(dbUp.N,dbUp.v,dbUp.ch);rvs();dbMsg='Database ufficiale aggiornato.';go('db')}
-function dbCr(on){const o=ovR();if(o)o.cr=on?1:undefined;else S.cfg.push({id:'ov',v:0,cr:on?1:undefined});if(!on&&o)o.v=0;save();dbMsg='';render()}
-async function dbExp(){const o={app:'simulatore',dbv:Math.floor(Date.now()/1000),ch:(ovR()||{}).ch||undefined,date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'):S[n]);dbMsg=await dlF('database.json',JSON.stringify(o),'application/json')==='File pronto.'?`Database esportato (${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni). Per pubblicarlo: su GitHub, nel repository del sito, premi «Add file» › «Upload files», carica database.json (sostituisce il precedente) e conferma con «Commit changes».`:'Download non riuscito.';render()}
+ dbApply(N,+o.dbv||1,o.acc);accEns();rvs();dbMsg=SP==='a'?'Copia di lavoro ripristinata dalla versione pubblicata.':'Database ufficiale ripristinato.';go('db')}
+function dbUpd(){if(!dbUp)return;if(cf!=='dbup'){cf='dbup';return render()}dbApply(dbUp.N,dbUp.v,dbUp.acc);accEns();rvs();dbMsg=SP==='a'?'Copia di lavoro aggiornata alla versione pubblicata.':'Database ufficiale aggiornato.';go('db')}
+async function dbExp(){if(SP!=='a')return;const o={app:'simulatore',dbv:Math.floor(Date.now()/1000),acc:accL(),date:new Date().toISOString(),S:{}};ST.forEach(n=>o.S[n]=n==='cfg'?S[n].filter(x=>x.id!=='ov'&&x.id!=='acc'):S[n]);dbMsg=await dlF('database.json',JSON.stringify(o),'application/json')==='File pronto.'?`Database esportato (${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni). Per pubblicarlo: su GitHub, nel repository del sito, premi «Add file» › «Upload files», carica database.json (sostituisce il precedente) e conferma con «Commit changes».`:'Download non riuscito.';render()}
 async function dbCopy(){if(cf!=='dbcp'){cf='dbcp';return render()}cf=null;if(!idb){dbMsg='Copia non possibile: questo browser non permette l’archivio esteso.';return render()}
  if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;
  try{const d=await new Promise((ok,ko)=>{const r=indexedDB.open('simulatore',4);r.onupgradeneeded=()=>ST.forEach(n=>{if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:'id'})});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)});
-  const tx=d.transaction(ST,'readwrite');ST.forEach(n=>{const s=tx.objectStore(n);s.clear();S[n].forEach(r=>{if(!(n==='cfg'&&r.id==='ov'))s.put(JSON.parse(JSON.stringify(r)))})});
+  const tx=d.transaction(ST,'readwrite');ST.forEach(n=>{const s=tx.objectStore(n);s.clear();S[n].forEach(r=>{if(!(n==='cfg'&&(r.id==='ov'||r.id==='acc')))s.put(JSON.parse(JSON.stringify(r)))})});
   await new Promise((ok,ko)=>{tx.oncomplete=ok;tx.onerror=tx.onabort=()=>ko(tx.error)});d.close();dbMsg='Copiato nel database personale. Passa a «Personale» per usarlo: lì puoi modificarlo senza toccare l’ufficiale.'}
  catch(e){dbMsg='Copia non riuscita.'}render()}
-function vDb(){const u=SP==='u',ov=ovR()||{},n=`${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni`;
- const card=(k,t,d)=>`<div class="dbc${SP===k?' on':''}"><div><b>${t}</b>${SP===k?'<span class="dbt">In uso</span>':''}<p class="mut">${d}</p></div>${SP===k?'':`<button class="pri" onclick="setSp('${k}')">Passa a ${t.toLowerCase()}</button>`}</div>`;
- let b=`${hd('Database')}<p class="mut">Tropsss ha due spazi separati. Ognuno ha i suoi dati, le sue stagioni e le sue statistiche: cambiando spazio non perdi nulla dell’altro.</p>
- <div class="dbg">${card('u','Ufficiale','Giocatori, squadre e competizioni già pronti, creati dall’autore. Parti da qui per giocare subito: puoi simulare partite e stagioni, ma i dati sono in sola lettura. Le tue partite restano solo sul tuo dispositivo.')}${card('p','Personale','Parte completamente vuoto: crei tu tutto, oppure importi dati, usi il Generatore o copi qui l’ufficiale.')}</div>
- <p class="mut">Spazio attuale: <b style="color:var(--ink)">${u?'Ufficiale':'Personale'}</b> · ${n}</p>${dbMsg?`<p style="color:var(--ink)">${esc(dbMsg)}</p>`:''}`;
- if(u){b+=`<h3>Database ufficiale</h3><p class="mut">${ov.cr?'Modalità creatore attiva: questo spazio è la tua copia di lavoro e non scarica gli aggiornamenti.':ov.v?(ov.v>1e9?'Versione del '+fd(new Date(ov.v*1000).toISOString().slice(0,10)):'Versione '+ov.v)+'.':'Non ancora scaricato.'}</p>`;
-  if(dbUp)b+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)">È disponibile una nuova versione del database ufficiale. Aggiornando, i dati e le stagioni di questo spazio vengono sostituiti.<div class="row"><button class="${cf==='dbup'?'dg':'pri'}" onclick="dbUpd()">${cf==='dbup'?'Conferma: aggiorna e sostituisci':'Aggiorna ora'}</button>${cf==='dbup'?'<button onclick="cf=null;render()">Annulla</button>':''}</div></div>`;
-  if(!ov.cr)b+=`<div class="row"><button class="${cf==='dbrs'?'dg':''}" onclick="if(cf!=='dbrs'){cf='dbrs';render()}else{cf=null;dbReset()}">${cf==='dbrs'?'Conferma: ripristina l’ufficiale':'Ripristina il database ufficiale'}</button>${cf==='dbrs'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>`;
-  b+=`<div class="row"><button class="${cf==='dbcp'?'dg':''}" onclick="dbCopy()">${cf==='dbcp'?'Conferma: sostituisci il database personale':'Copia nel mio database personale'}</button>${cf==='dbcp'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>
-  <h3>Per l’autore</h3>${ov.cr?`<p class="mut">Modalità creatore attiva: puoi modificare tutto in questo spazio. Quando hai finito, esporta il file. Nel file va tutto ciò che vedi qui, stagioni e statistiche comprese: azzera prima ciò che non vuoi pubblicare.</p><div class="row"><button class="pri" onclick="dbExp()">Esporta il database ufficiale</button><button onclick="dbCr(false)">Disattiva la modalità creatore</button></div>${xlH()}
-  <h4>Codice creatore</h4><p class="mut">${ov.ch?'Un codice è impostato: serve per attivare la modalità creatore su altri dispositivi e viene pubblicato col database solo come impronta.':'Nessun codice impostato: chiunque potrebbe attivare la modalità creatore. Impostane uno lungo (almeno 8 caratteri).'}</p><label>${ov.ch?'Nuovo codice':'Codice'}<input id="cdn" type="password" autocomplete="new-password"></label><div class="row" style="margin-top:0"><button onclick="dbSetCode()">${ov.ch?'Cambia il codice':'Imposta il codice'}</button></div>`
-  :ov.ch?`<p class="mut">Questo spazio è in sola lettura. Se sei l’autore inserisci il codice creatore.</p><label>Codice creatore<input id="cdc" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')dbUnlock()"></label><div class="row" style="margin-top:0"><button onclick="dbUnlock()">Attiva la modalità creatore</button></div>`
-  :`<p class="mut">Nessun codice creatore impostato.</p><div class="row"><button onclick="dbCr(true)">Attiva la modalità creatore</button></div>`}`}
- else b+=`<h3>Database personale</h3><p class="mut">Solo tuo e inizialmente vuoto. Crea giocatori e squadre a mano, importali da un backup o da un file CSV, oppure generali nel Generatore.</p>`;
- return b}
 
 /* ===== v41: sola lettura per l'ufficiale, codice creatore ===== */
 function sha(s){const K=[],H=[];{let n=2,c=0;while(c<64){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p){if(c<8)H[c]=(Math.pow(n,.5)%1)*4294967296|0;K[c]=(Math.pow(n,1/3)%1)*4294967296|0;c++}n++}}
@@ -1728,10 +1738,8 @@ function sha(s){const K=[],H=[];{let n=2,c=0;while(c<64){let p=1;for(let i=2;i*i
   h[0]=(h[0]+a)|0;h[1]=(h[1]+bb)|0;h[2]=(h[2]+c)|0;h[3]=(h[3]+d)|0;h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0}
  return h.map(x=>('00000000'+(x>>>0).toString(16)).slice(-8)).join('')}
 const chash=c=>{let x=sha('tropsss/v1|'+c);for(let i=0;i<3000;i++)x=sha(x+c);return x};
-function dbSetCode(){const v=($('#cdn')||{}).value||'';if(v.length<8){dbMsg='Il codice deve avere almeno 8 caratteri.';return render()}const o=ovR();if(!o)return;o.ch=chash(v);save();dbMsg='Codice salvato. Esporta di nuovo il database per pubblicarlo.';render()}
-function dbUnlock(){const o=ovR(),v=($('#cdc')||{}).value||'';if(o&&o.ch&&chash(v)!==o.ch){dbMsg='Codice errato.';return render()}dbCr(true)}
-const lkd=()=>SP==='u'&&!(ovR()&&ovR().cr);
-const LKM='Il database ufficiale è in sola lettura. Per modificare i dati copialo nel tuo database personale.';
+const lkd=()=>SP==='u';
+const LKM='L’area ufficiale è in sola lettura. Per modificare i dati copiali nel tuo spazio personale.';
 ['mSig','mRel','mTrf','bkApp','sP','dP','sT','dT','sC','dC','sY','dY','seed','bkA','impGo','genRun','rsa'].forEach(n=>{const f=window[n];if(typeof f!=='function')throw new Error('guardia: '+n);window[n]=function(){if(lkd()){dbMsg=LKM;cf=null;ed=null;go('db');return}return f.apply(this,arguments)}});
 {const r0=render;window.render=function(){if(lkd())ed=null;r0();if(lkd())lkUi()}}
 function lkUi(){const v=$('#v');if(!v||tab==='db')return;
@@ -1772,7 +1780,7 @@ function xlParse(sh){if(!sh.Giocatori&&!sh.Portieri)throw new Error('Mancano i f
  return{csv,teams,comps,psi,n:rows.length}}
 const XCN={rosso:'#D32F2F',blu:'#1565C0',azzurro:'#29B6F6',celeste:'#81D4FA',verde:'#1D8650',giallo:'#FBC02D',oro:'#C9A227',rubino:'#B0123A',zaffiro:'#0F3D91',avorio:'#F5F0E1',turchese:'#1BB5A8',ciano:'#00BCD4',antracite:'#383E42',corallo:'#FF6F61',indaco:'#3F3FA8',argento:'#C0C0C0',ocra:'#CC7722',magenta:'#D81B8C',bronzo:'#8C6A3A',porpora:'#6A1B6A',smeraldo:'#0E7C59',arancione:'#F57C00',nero:'#111111',bianco:'#FFFFFF',grigio:'#9E9E9E',viola:'#7B1FA2',rosa:'#F48FB1',bordeaux:'#800020',granata:'#7B1F2E'};
 function xlApply(I){const out={errs:[],msg:[]},col=x=>{x=String(x).trim();const k=x.toLowerCase();if(XCN[k])return XCN[k];const m=x.match(/^#?([0-9a-fA-F]{6})$/);return m?'#'+m[1].toUpperCase():null};
- S.players=[];S.teams=[];S.comps=[];S.stats=[];S.cfg=S.cfg.filter(x=>x.id==='ov');S.cfg.push({id:'g',date:tdy()});rx();
+ S.players=[];S.teams=[];S.comps=[];S.stats=[];S.cfg=S.cfg.filter(x=>x.id==='ov'||x.id==='acc');S.cfg.push({id:'g',date:tdy()});rx();
  const i0={dup:imp.dup,mk:imp.mk,txt:imp.txt,res:imp.res,msg:imp.msg};imp.dup=false;imp.mk=true;imp.txt=I.csv;const r=impChk(I.csv);
  if(r.errs.length){Object.assign(imp,i0);out.errs=r.errs;return out}
  imp.res=r;impGo();Object.assign(imp,i0);
@@ -1789,15 +1797,15 @@ function xlApply(I){const out={errs:[],msg:[]},col=x=>{x=String(x).trim();const 
   if(ids.length<2)out.errs.push('Competizione '+c.name+': servono almeno 2 squadre (colonna Competizione nel foglio Squadre)');
   S.comps.push(o)});
  out.val=vld();out.n={p:S.players.length,t:S.teams.length,c:S.comps.length,pt:S.teams.filter(t=>t.ids.length).length,fa:S.players.filter(p=>!S.teams.some(t=>t.ids.includes(p.id))).length};return out}
-async function xlFile(el){const f=el.files&&el.files[0];el.value='';if(!f||!ovR()||!ovR().cr)return;xlBusy=true;xl=null;dbMsg='Leggo il foglio…';render();
+async function xlFile(el){const f=el.files&&el.files[0];el.value='';if(!f||SP!=='a')return;xlBusy=true;xl=null;dbMsg='Leggo il foglio…';render();
  try{const I=xlParse(xlRead(await xlZip(await f.arrayBuffer())));
   const snap=ST.map(n=>[n,JSON.parse(JSON.stringify(S[n]))]);let o;try{o=xlApply(I)}finally{snap.forEach(([n,a])=>S[n]=a);rx();SM=null}
   if(o.errs.length){dbMsg='';xl={errs:o.errs,file:f.name}}else{dbMsg='';xl={I,o,file:f.name}}}
  catch(e){dbMsg='';xl={errs:[(e&&e.message)||'File non leggibile.'],file:f.name}}
  xlBusy=false;render()}
-function xlGo(){if(!xl||!xl.I||!ovR()||!ovR().cr)return;if(cf!=='xl'){cf='xl';return render()}cf=null;const o=xlApply(xl.I);if(o.errs.length){xl={errs:o.errs,file:xl.file};return render()}
+function xlGo(){if(!xl||!xl.I||SP!=='a')return;if(cf!=='xl'){cf='xl';return render()}cf=null;const o=xlApply(xl.I);if(o.errs.length){xl={errs:o.errs,file:xl.file};return render()}
  rvs();save();dbMsg=`Importati ${o.n.p} giocatori, ${o.n.t} squadre e ${o.n.c} competizioni. Ora premi «Esporta il database ufficiale» e pubblicalo.`;xl=null;go('db')}
-function xlH(){const ov=ovR()||{};if(!ov.cr)return '';
+function xlH(){if(SP!=='a')return '';
  let h=`<h4>Importa dal foglio Excel</h4><p class="mut">Carica il file Tropsss-giocatori.xlsx compilato: l’app legge i fogli Giocatori, Portieri, Squadre e Competizioni, controlla gli errori e ti mostra un riepilogo prima di cambiare qualcosa. Il foglio è la fonte di verità: l’importazione <b>sostituisce</b> giocatori, squadre, competizioni e statistiche di questo spazio.</p>
  <div class="row"><label class="chk" style="margin:0"><input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="xlFile(this)" aria-label="Scegli il file Excel"></label></div>`;
  if(xlBusy)h+='<p class="mut">Controllo il file…</p>';
@@ -1811,6 +1819,59 @@ const aq=v=>v>=80?4:v>=65?3:v>=50?2:v>=35?1:0;
 function atg(p,mc){mc=mc||{};return `<div class="attg">${fl(p.role).map(([k,l,ns])=>{const v=Math.round(mv(p,k)),d=mc[k]||0;
  return `<div class="atp"><div class="ath"><span>${esc(l)}</span><b class="a${aq(v)}">${v}</b>${d?`<em class="${d>0?'up':'dn'}">${d>0?'▲ +'+d:'▼ '+d}</em>`:''}</div><ul>${ns.map(n=>{const x=Math.round(pv(p,k,n));return `<li><span>${esc(n)}</span><b class="a${aq(x)}">${x}</b></li>`}).join('')}</ul></div>`}).join('')}</div>`}
 const ncnt=k=>{const n=k==='giocatori'?S.players.length:k==='squadre'?S.teams.filter(t=>!t.nz).length:k==='nazionali'?S.teams.filter(t=>t.nz).length:k==='competizioni'?S.comps.length:null;return n==null?'':`<em class="nc">${n}</em>`};
+/* ===== v45: schermata iniziale, tre aree, accessi ===== */
+const ARN={u:'Ufficiale',p:'Personale',a:'Area privata'},ACK='tropsss-acc';
+let AUTH=null,gateErr='',gateLg=null,gBusy=false;
+const OWN={n:'Tropsss',h:'da37113a7273edabe94a40a44c75de0ab768958da6cdb47166493749d91a9d29'},CMAIL='lorenzotro@gmail.com';
+const mreq=n=>'mailto:'+CMAIL+'?subject='+encodeURIComponent('Tropsss: richiesta cambio password')+'&body='+encodeURIComponent('Richiedo il cambio della password per l’accesso «'+n+'» all’area privata di Tropsss.');
+function accEns(){if(SP==='a'&&!S.cfg.find(x=>x.id==='acc'))S.cfg.push({id:'acc',l:[]})}
+const ah=(n,c)=>chash(String(n).trim().toLowerCase()+'|'+c);
+const accR=()=>S.cfg.find(x=>x.id==='acc')||null,accL=()=>{const a=accR();return a?a.l.map(x=>({n:x.n,h:x.h,r:x.r})):[]};
+const GI={u:'<path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/>',p:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',a:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>'};
+function gateH(){const c=(k,t,d)=>`<button class="gc" onclick="gPick('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${GI[k]}</svg><b>${t}</b><p>${d}</p></button>`;
+ const g=gateLg;let f='';
+ if(g){f=`<form class="gf" onsubmit="event.preventDefault();gLogin()"><h3>Accesso area privata</h3><p class="mut">Inserisci nome e password.</p>
+  <label>Nome<input id="gn" autocomplete="username" autocapitalize="none" spellcheck="false"></label><label>Password<input id="gp" type="password" autocomplete="current-password"></label>
+  ${gateErr?`<p class="ge">${esc(gateErr)}</p>`:''}<div class="row"><button class="pri" type="submit"${gBusy?' disabled':''}>${gBusy?'Controllo…':'Entra'}</button><button type="button" onclick="gateLg=null;gateErr='';gateShow()">Annulla</button></div><p class="mut" style="margin:12px 0 0"><a class="lk" href="${mreq('')}">Password dimenticata? Richiedi il cambio via email</a></p></form>`}
+ return `<div class="gw"><div class="gb"><i></i>Tropsss</div><p class="gs">Simulatore di calcio</p><div class="gg">${c('u','Ufficiale','Giocatori, squadre e competizioni preparati dall’autore. Accesso libero: puoi simulare partite e stagioni, ma i dati non si possono modificare.')}${c('p','Personale','Il tuo spazio, inizialmente vuoto. Accesso libero: crei e gestisci tutto tu. I dati restano sul tuo dispositivo.')}${c('a','Area privata','Per chi aggiorna il database ufficiale. Accesso con nome e password, solo per il proprietario e per chi riceve l’accesso.')}</div>${f}</div>`}
+function gateShow(){document.body.classList.add('gt');let g=$('#gate');if(!g){g=document.createElement('div');g.id='gate';document.body.appendChild(g)}g.innerHTML=gateH();const i=$('#gn');if(i)i.focus()}
+async function gEnter(s){window.TROPSSS_SPACE=s;document.body.classList.remove('gt');const g=$('#gate');if(g)g.remove();gateLg=null;gateErr='';tab='home';dbMsg='';await boot()}
+async function gPick(k){if(k!=='a')return gEnter(k);gateErr='';gateLg={acc:[]};gateShow();let acc=null;const o=await dbFetch();if(o&&Array.isArray(o.acc)){acc=o.acc;try{localStorage.setItem(ACK,JSON.stringify(acc))}catch(e){}}else{try{acc=JSON.parse(localStorage.getItem(ACK))}catch(e){acc=null}}
+ gateLg={acc};gateShow()}
+async function gLogin(){if(gBusy||!gateLg)return;const n=($('#gn').value||'').trim(),c=$('#gp').value||'';if(!n||!c){gateErr='Inserisci nome e password.';return gateShow()}
+ gBusy=true;gateErr='';gateShow();await new Promise(r=>setTimeout(r,30));let h=null;try{h=ah(n,c)}catch(e){}
+ await new Promise(r=>setTimeout(r,400));gBusy=false;
+ if(n.toLowerCase()===OWN.n.toLowerCase()){if(h!==OWN.h){gateErr='Nome o password errati.';return gateShow()}AUTH={n:OWN.n,h:OWN.h,r:'o',fx:1};return gEnter('a')}
+ const a=(gateLg.acc||[]).find(x=>String(x.n).trim().toLowerCase()===n.toLowerCase());
+ if(!a||a.h!==h){gateErr='Nome o password errati.';return gateShow()}
+ AUTH={n:a.n,h:a.h,r:a.r==='o'?'o':'e'};gEnter('a')}
+async function gateOpen(){if(tm){clearTimeout(tm);tm=null;busy=busy.then(flush)}await busy;try{if(idb)idb.close()}catch(e){}idb=null;ST.forEach(n=>{S[n]=[];cache[n].clear()});rvs();tw=null;dbUp=null;dbMsg='';AUTH=null;window.TROPSSS_SPACE=null;SP='p';gateLg=null;gateErr='';xl=null;gateShow()}
+function accAdd(){if(SP!=='a'||!AUTH||AUTH.r!=='o')return;const n=($('#acn').value||'').trim(),c=$('#acp').value||'',r=$('#acr').value==='o'?'o':'e',l=accL();
+ if(n.length<2||n.length>30){dbMsg='Il nome deve avere da 2 a 30 caratteri.';return render()}if(n.toLowerCase()===OWN.n.toLowerCase()||l.some(x=>x.n.toLowerCase()===n.toLowerCase())){dbMsg='Esiste già un accesso con questo nome.';return render()}
+ if(c.length<10){dbMsg='La password deve avere almeno 10 caratteri.';return render()}
+ l.push({n,h:ah(n,c),r});accSet(l);dbMsg=`Accesso creato per «${n}». Diventa attivo quando pubblichi il database. Comunica a ${n} nome e password.`;render()}
+function accSet(l){let a=accR();if(a)a.l=l;else S.cfg.push({id:'acc',l});save()}
+function accDel(i){if(SP!=='a'||!AUTH||AUTH.r!=='o')return;const l=accL(),x=l[i];if(!x)return;if(x.n.toLowerCase()===AUTH.n.toLowerCase()){dbMsg='Non puoi revocare il tuo stesso accesso.';return render()}
+ if(cf!=='acd'+i){cf='acd'+i;return render()}cf=null;l.splice(i,1);accSet(l);dbMsg=`Accesso di «${x.n}» revocato. Vale dopo la pubblicazione del database.`;render()}
+function vDb(){const sp=SP,ov=ovR()||{},n=`${S.players.length} giocatori, ${S.teams.length} squadre, ${S.comps.length} competizioni`;
+ let b=`${hd('Database')}<p class="mut">Area in uso: <b style="color:var(--ink)">${ARN[sp]}${sp==='a'&&AUTH?' · '+esc(AUTH.n)+(AUTH.r==='o'?' (proprietario)':' (collaboratore)'):''}</b> · ${n}</p>${dbMsg?`<p style="color:var(--ink)">${esc(dbMsg)}</p>`:''}
+ <div class="row"><button onclick="gateOpen()">Cambia area</button></div>`;
+ const ver=ov.v?(ov.v>1e9?'del '+fd(new Date(ov.v*1000).toISOString().slice(0,10)):'numero '+ov.v):'';
+ if(sp==='u'){b+=`<h3>Database ufficiale</h3><p class="mut">Sola lettura: puoi giocare partite e stagioni, ma non cambiare giocatori, squadre e competizioni. ${ver?'Versione '+ver+'.':'Non ancora scaricato.'} Le tue partite restano solo su questo dispositivo.</p>`;
+  if(dbUp)b+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)">È disponibile una nuova versione del database ufficiale. Aggiornando, i dati e le stagioni di questa area vengono sostituiti.<div class="row"><button class="${cf==='dbup'?'dg':'pri'}" onclick="dbUpd()">${cf==='dbup'?'Conferma: aggiorna e sostituisci':'Aggiorna ora'}</button>${cf==='dbup'?'<button onclick="cf=null;render()">Annulla</button>':''}</div></div>`;
+  b+=`<div class="row"><button class="${cf==='dbrs'?'dg':''}" onclick="if(cf!=='dbrs'){cf='dbrs';render()}else{cf=null;dbReset()}">${cf==='dbrs'?'Conferma: ripristina l’ufficiale':'Ripristina il database ufficiale'}</button>${cf==='dbrs'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>
+  <div class="row"><button class="${cf==='dbcp'?'dg':''}" onclick="dbCopy()">${cf==='dbcp'?'Conferma: sostituisci il tuo spazio personale':'Copia nel mio spazio personale'}</button>${cf==='dbcp'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>`}
+ else if(sp==='p')b+=`<h3>Spazio personale</h3><p class="mut">Solo tuo e inizialmente vuoto. Crea giocatori e squadre a mano, importali da un backup o da un file CSV, usa il Generatore, oppure copia qui l’ufficiale dall’area Ufficiale.</p>`;
+ else{const l=accL(),own=AUTH&&AUTH.r==='o';
+  b+=`<h3>Copia di lavoro</h3><p class="mut">Questa è la tua copia di lavoro del database ufficiale: modifichi qui, e gli altri non vedono nulla finché non pubblichi. ${ver?'Basata sulla versione '+ver+'.':''} Resta su questo dispositivo.</p>`;
+  if(dbUp)b+=`<div class="warn" style="border-color:var(--acc);color:var(--ink);background:rgba(29,134,80,.08)">La versione pubblicata è più recente della tua copia. Scaricandola, la tua copia di lavoro viene sostituita.<div class="row"><button class="${cf==='dbup'?'dg':'pri'}" onclick="dbUpd()">${cf==='dbup'?'Conferma: sostituisci la mia copia':'Scarica la versione pubblicata'}</button>${cf==='dbup'?'<button onclick="cf=null;render()">Annulla</button>':''}</div></div>`;
+  b+=`<div class="row"><button class="${cf==='dbrs'?'dg':''}" onclick="if(cf!=='dbrs'){cf='dbrs';render()}else{cf=null;dbReset()}">${cf==='dbrs'?'Conferma: ripristina dalla versione pubblicata':'Ripristina dalla versione pubblicata'}</button>${cf==='dbrs'?'<button onclick="cf=null;render()">Annulla</button>':''}</div>
+  ${xlH()}<h3>Pubblicazione</h3><p class="mut">Esporta il file e caricalo su GitHub: nel repository del sito premi «Add file» › «Upload files», carica database.json (sostituisce il precedente) e conferma con «Commit changes». Nel file va tutto ciò che vedi qui, stagioni e statistiche comprese: azzera prima ciò che non vuoi pubblicare. Possono pubblicare solo le persone invitate come collaboratori del repository su GitHub.</p><div class="row"><button class="pri" onclick="dbExp()">Esporta il database ufficiale</button></div>
+  <h3>Accessi</h3><p class="mut">Chi può entrare nell’area privata. L’accesso del proprietario principale è fisso e non si può cambiare né revocare. Gli altri valgono dopo la pubblicazione del database.</p>
+  <div class="ts"><table class="pt"><thead><tr><th>Nome</th><th class="hm">Ruolo</th><th></th></tr></thead><tbody><tr><td style="width:auto;color:var(--ink);font-weight:600">${esc(OWN.n)}${AUTH&&AUTH.fx?' <span class="mut">(tu)</span>':''}</td><td class="hm" style="width:auto">Proprietario principale · fisso</td><td class="ac"></td></tr>${l.map((x,i)=>`<tr><td style="width:auto;color:var(--ink);font-weight:600">${esc(x.n)}${AUTH&&x.n.toLowerCase()===AUTH.n.toLowerCase()?' <span class="mut">(tu)</span>':''}</td><td class="hm" style="width:auto">${x.r==='o'?'Proprietario':'Collaboratore'}</td><td class="ac">${own&&!(AUTH&&x.n.toLowerCase()===AUTH.n.toLowerCase())?`<button class="${cf==='acd'+i?'dg':'sec'}" onclick="accDel(${i})">${cf==='acd'+i?'Conferma':'Revoca'}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`;
+  if(own)b+=`<h4>Dai accesso a una persona</h4><div class="pg"><label>Nome<input id="acn" autocomplete="off"></label><label>Password (min. 10 caratteri)<input id="acp" type="text" autocomplete="off"></label></div><label>Ruolo<select id="acr"><option value="e">Collaboratore: modifica e esporta</option><option value="o">Proprietario: gestisce anche gli accessi</option></select></label><div class="row" style="margin-top:0"><button class="pri" onclick="accAdd()">Crea accesso</button></div><p class="mut">Per far pubblicare la persona devi invitarla anche su GitHub (repository › Settings › Collaborators). Senza invito può modificare la sua copia ma non pubblicare: in quel caso ti manda il file.</p>`;
+  b+=`<h4>Password</h4><p class="mut">La password non si cambia da qui: per cambiarla scrivi al proprietario.</p><div class="row" style="margin-top:0"><a class="btn" href="${mreq(AUTH?AUTH.n:'')}">Richiedi il cambio password via email</a></div>`}
+ return b}
 document.addEventListener('click',e=>{const d=document.querySelector('details.mn[open]');if(d&&!d.contains(e.target))d.open=false});
 window.ready=boot();
 </script><script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js')}catch(e){}})}</script></body></html>
